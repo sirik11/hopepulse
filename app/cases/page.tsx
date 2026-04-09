@@ -490,7 +490,7 @@ export default function CasesPage() {
         <div className="grid grid-cols-3 gap-4 mt-4">
           {[
             { value: `${cases.length}+`, label: "Cases in database", icon: Users },
-            { value: "10+", label: "Cancer types covered", icon: Activity },
+            { value: "25+", label: "Cancer types covered", icon: Activity },
             { value: "15+", label: "Countries represented", icon: MapPin },
           ].map(({ value, label, icon: Icon }) => (
             <div key={label} className="card text-center">

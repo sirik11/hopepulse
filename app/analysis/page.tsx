@@ -481,6 +481,354 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     };
   }
 
+  // ===== STOMACH CANCER =====
+  if (type === "stomach") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const survivals = [70, 32, 20, 5];
+    const pct = survivals[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Stomach (Gastric) Cancer", stage, ageGroup: age,
+      bestCase: { label: s <= 2 ? "Surgical cure with D2 resection" : "Response to FLOT chemotherapy", pct: Math.min(pct + 15, 75), desc: s <= 2 ? "Early gastric cancer (EGC) detected by endoscopy has excellent outcomes. D2 gastrectomy is curative in most cases. Endoscopic submucosal dissection (ESD) for T1a tumors avoids surgery entirely." : "Perioperative FLOT chemotherapy (before and after surgery) has significantly improved resectable Stage 3 outcomes — 45% 5-year survival in FLOT4 trial." },
+      typicalCase: { label: s <= 2 ? "D2 gastrectomy ± adjuvant chemo" : "Perioperative FLOT + surgery", pct, desc: s <= 2 ? "Total or subtotal gastrectomy with D2 lymph node dissection. Adjuvant chemotherapy (S-1 or capecitabine + oxaliplatin) for Stage 2–3." : "Perioperative FLOT (docetaxel, oxaliplatin, leucovorin, fluorouracil) x4 cycles before and after surgery. HER2+ tumors: add trastuzumab." },
+      worstCase: { label: "Metastatic progression", pct: 100 - pct, desc: "Gastric cancer spreads to peritoneum, liver, and lymph nodes. First-line: FOLFOX or XELOX ± trastuzumab (HER2+) or nivolumab (CheckMate 649). Median survival 12–18 months for Stage 4 with modern regimens." },
+      treatmentOverview: [
+        "**Surgery**: Total or subtotal gastrectomy + D2 lymphadenectomy — the most important curative step",
+        "**Perioperative FLOT**: 4 cycles before and 4 cycles after surgery for Stage 2–3 (FLOT4 trial — superior to ECF)",
+        "**Adjuvant capecitabine + oxaliplatin (CAPOX)**: Alternative post-operative regimen",
+        "**HER2 testing**: ~15–20% of gastric tumors are HER2+ — add trastuzumab to chemotherapy",
+        "**PD-L1 testing**: Nivolumab + chemotherapy improves OS for PD-L1 CPS ≥5 (CheckMate 649)",
+        "**Metastatic**: FOLFOX or XELOX + immunotherapy backbone",
+      ],
+      keyFacts: [
+        `5-year survival Stage ${s}: **~${pct}%**`,
+        "HER2+ (~15–20%): trastuzumab added to chemo — improves survival",
+        "Perioperative FLOT achieved median OS 50 months vs 35 months for ECF (FLOT4 trial)",
+        "Early gastric cancer detected by endoscopy screening: >90% cure rate",
+        "MSI-H gastric cancer: excellent response to pembrolizumab",
+      ],
+      hopefulNote: s <= 2 ? "Early-stage gastric cancer treated with D2 surgery is highly curable. Regular endoscopy screening in high-risk populations catches these at Stage 1–2." : "Perioperative FLOT chemotherapy has significantly improved outcomes for resectable Stage 2–3 gastric cancer. HER2+ and MSI-H subtypes now have targeted treatment options.",
+      timeToTreatment: "HER2 and MSI testing while staging. Perioperative chemo starts 2–3 weeks after diagnosis for resectable disease.",
+      waitingTips: ["HER2 testing on biopsy — urgent, changes treatment plan", "Nutritional assessment — gastric cancer often causes weight loss, needs pre-treatment optimization", "Ask about staging laparoscopy before committing to surgery — detects occult peritoneal metastases", "MSI/MMR testing — guides immunotherapy eligibility"],
+    };
+  }
+
+  // ===== ENDOMETRIAL (UTERINE) CANCER =====
+  if (type === "endometrial") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const survivals = [95, 77, 56, 17];
+    const pct = survivals[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Endometrial (Uterine) Cancer", stage, ageGroup: age,
+      bestCase: { label: s <= 2 ? "Surgical cure with hysterectomy" : "Complete response to chemo-immunotherapy", pct: Math.min(pct + 10, 98), desc: s <= 2 ? "Stage 1 endometrial cancer treated with hysterectomy + bilateral salpingo-oophorectomy is curable in ~95% of cases. Most are low-grade endometrioid — an excellent prognosis." : "MMR-deficient (MSI-H) Stage 3–4 tumors respond dramatically to pembrolizumab — with some complete responses." },
+      typicalCase: { label: s <= 2 ? "Robotic hysterectomy ± brachytherapy" : "Carboplatin/paclitaxel ± pembrolizumab", pct, desc: s <= 2 ? "Minimally invasive (robotic or laparoscopic) hysterectomy + BSO + pelvic lymph node dissection. Vaginal brachytherapy for high-intermediate risk Stage 1." : "Carboplatin + paclitaxel x6 cycles. Pembrolizumab added for MMR-deficient/MSI-H tumors (KEYNOTE-158, DUO-E). Lenvatinib + pembrolizumab for MMR-proficient Stage 4." },
+      worstCase: { label: "Recurrent or metastatic disease", pct: 100 - pct, desc: "High-grade histologies (serous, clear cell, carcinosarcoma) have poorer outcomes. Stage 3C (lymph node positive) requires full systemic therapy. Pelvic recurrence may be treated with chemoradiation." },
+      treatmentOverview: [
+        "**Surgery**: Minimally invasive hysterectomy + BSO + sentinel lymph node mapping — standard for all stages if operable",
+        "**Brachytherapy**: Vaginal cuff brachytherapy for high-intermediate risk Stage 1",
+        "**External beam radiation**: For Stage 3 disease with lymph node involvement",
+        "**Chemotherapy**: Carboplatin + paclitaxel for Stage 3–4 or high-grade histology",
+        "**Pembrolizumab**: For MMR-deficient (MSI-H) endometrial cancer — excellent response",
+        "**Lenvatinib + pembrolizumab**: For MMR-proficient Stage 4 (KEYNOTE-775) — significant OS benefit",
+        "**Hormone therapy**: Progestins for low-grade recurrent disease (fertility-sparing in select cases)",
+      ],
+      keyFacts: [
+        `5-year survival Stage ${s}: **${pct}%**`,
+        "MMR deficiency / MSI-H (25–30% of endometrial cancers): excellent response to pembrolizumab",
+        "Lenvatinib + pembrolizumab: improves OS regardless of MMR status for advanced disease",
+        "Most common gynecologic cancer in developed countries — usually detected early due to bleeding",
+        "Lynch syndrome: MMR gene mutation — colonoscopy surveillance critical",
+      ],
+      hopefulNote: s <= 2 ? "Stage 1 endometrial cancer is one of the most curable gynecologic cancers. Most patients are cured with minimally invasive surgery and return to normal life within weeks." : "Endometrial cancer treatment has been transformed by immunotherapy. Pembrolizumab for MSI-H disease and lenvatinib + pembrolizumab for advanced disease have dramatically improved options.",
+      timeToTreatment: "Surgery typically within 2–4 weeks. MMR/MSI testing and molecular profiling important before systemic therapy decisions.",
+      waitingTips: ["MMR/MSI testing on biopsy — guides treatment planning", "POLE mutation testing — ultra-mutated tumors have excellent prognosis", "Lynch syndrome testing if MMR-deficient — family counseling essential", "Discuss sentinel lymph node biopsy technique with surgical team"],
+    };
+  }
+
+  // ===== AML =====
+  if (type === "aml") {
+    const isSenior = age === "senior";
+    return {
+      cancerType: "Acute Myeloid Leukemia (AML)", stage: stage || "Newly Diagnosed", ageGroup: age,
+      bestCase: { label: "Complete remission and long-term cure", pct: isSenior ? 30 : 55, desc: isSenior ? "Fit older patients treated with venetoclax + azacitidine achieve complete remission in ~65% of cases. Molecular remission is achievable." : "Young/fit patients with favorable cytogenetics (inv(16), t(8;21), NPM1-mutated without FLT3-ITD) achieve CR in 70–80%, with long-term cure rates of 50–60%." },
+      typicalCase: { label: "Complete remission with induction chemotherapy", pct: isSenior ? 20 : 40, desc: isSenior ? "Venetoclax + azacitidine for unfit older patients — CR/CRi ~65%, manageable toxicity. Median OS ~15 months." : "7+3 induction (cytarabine + daunorubicin/idarubicin). CR achieved in ~70–80% of younger patients. Consolidation with high-dose cytarabine or allo-SCT for high-risk." },
+      worstCase: { label: "Refractory disease or relapse", pct: isSenior ? 60 : 40, desc: "AML relapse requires salvage chemotherapy (MEC, FLAG-IDA) followed by allogeneic stem cell transplant for eligible patients. FLT3-ITD mutation, complex karyotype, and secondary AML carry worse prognosis." },
+      treatmentOverview: [
+        "**Cytogenetic/molecular testing**: Essential before treatment — determines risk category and targeted options",
+        "**Induction (fit patients)**: 7+3 (cytarabine + anthracycline) — 7 days cytarabine + 3 days daunorubicin",
+        "**Targeted additions**: Midostaurin (FLT3-mutated), Gemtuzumab (CD33+, favorable cytogenetics)",
+        "**Consolidation**: High-dose cytarabine x3–4 cycles or allogeneic stem cell transplant for high-risk",
+        "**Older/unfit patients**: Venetoclax + azacitidine (VIALE-A trial) — dramatically improved outcomes",
+        "**IDH1/IDH2 mutations**: Ivosidenib (IDH1), enasidenib (IDH2) — targeted oral agents",
+        "**Relapsed/refractory**: Salvage chemo + allo-SCT for eligible; gilteritinib for FLT3+ relapse",
+      ],
+      keyFacts: [
+        `5-year survival (younger adults): **35–50%** (varies by molecular subtype)`,
+        "NPM1 mutation without FLT3-ITD: favorable — may not need transplant in CR1",
+        "FLT3-ITD: higher relapse risk — midostaurin added to induction, transplant often recommended",
+        "Venetoclax + azacitidine: transformed treatment for older adults (VIALE-A trial)",
+        "IDH1/IDH2 mutations (~20%): targeted oral agents available",
+      ],
+      hopefulNote: "AML treatment has been transformed by molecular testing and targeted therapy. Venetoclax-based regimens for older patients and targeted agents for FLT3, IDH1/IDH2, and NPM1 mutations have meaningfully improved outcomes across age groups. High-risk patients achieving remission should discuss stem cell transplant.",
+      timeToTreatment: "Treatment starts within days to 1 week of diagnosis. Rapid molecular testing (48–72 hours) needed to guide treatment.",
+      waitingTips: ["Cytogenetic (karyotype) and molecular panel (FLT3, NPM1, IDH1/2, CEBPA) testing is urgent and happens at diagnosis", "HLA typing for potential stem cell transplant — can be done at diagnosis", "Fertility preservation if applicable — discuss before starting induction chemotherapy", "Ask about FLT3 inhibitor (midostaurin) addition to induction if FLT3-mutated"],
+    };
+  }
+
+  // ===== CML =====
+  if (type === "cml") {
+    return {
+      cancerType: "Chronic Myeloid Leukemia (CML)", stage: stage || "Chronic Phase", ageGroup: age,
+      bestCase: { label: "Deep molecular remission (DMR) — treatment-free", pct: 90, desc: "Most CML patients in chronic phase achieve complete cytogenetic response (CCyR) and then deep molecular response (DMR/MR4.5) with modern TKIs (imatinib, dasatinib, nilotinib). 40–60% of patients achieving sustained DMR can successfully stop TKI ('treatment-free remission')." },
+      typicalCase: { label: "Major molecular response (MMR) on TKI therapy", pct: 85, desc: "Oral BCR-ABL tyrosine kinase inhibitor (imatinib, dasatinib, or nilotinib) taken daily. Responses monitored by PCR. Most patients achieve MMR within 12–18 months and continue therapy long-term — or stop if sustained deep remission." },
+      worstCase: { label: "Resistance or progression to accelerated/blast phase", pct: 10, desc: "~15–20% of patients develop resistance or intolerance to first-line TKI. Second/third-line TKIs (ponatinib, bosutinib) available. T315I mutation requires ponatinib or asciminib. Blast crisis is rare with appropriate treatment but resembles acute leukemia." },
+      treatmentOverview: [
+        "**First-line TKI**: Imatinib (Gleevec) 400mg/day OR dasatinib 100mg/day OR nilotinib 300mg BD — all highly effective",
+        "**Second-line TKIs**: Dasatinib, nilotinib, bosutinib — for imatinib failure",
+        "**Ponatinib or asciminib**: For T315I mutation or multiple TKI failures",
+        "**PCR monitoring**: BCR-ABL1 transcript levels every 3 months — guides response and treatment adjustment",
+        "**Treatment-free remission (TFR)**: Can attempt TKI discontinuation after ≥2 years of sustained MR4.5",
+        "**Blast crisis**: Treated as acute leukemia + TKI; allo-SCT if remission achieved",
+      ],
+      keyFacts: [
+        "CML in chronic phase: **life expectancy now equivalent to general population** with TKI therapy",
+        "BCR-ABL (Philadelphia chromosome t(9;22)): the driver mutation — highly targetable",
+        "Imatinib introduced 2001 — transformed CML from fatal to manageable chronic disease",
+        "40–60% of patients in sustained DMR can stop TKI — treatment-free remission is a real goal",
+        "Asciminib (STAMP inhibitor): new mechanism — effective for resistant/intolerant cases",
+      ],
+      hopefulNote: "CML is one of oncology's greatest success stories. Imatinib and subsequent TKIs have transformed it from a fatal leukemia into a manageable chronic condition. Most patients in chronic phase achieve excellent responses, live normal lifespans, and many can eventually stop medication. This is genuinely excellent news.",
+      timeToTreatment: "TKI starts within 1–2 weeks of confirmed BCR-ABL diagnosis. Rapid relief of symptoms once TKI started.",
+      waitingTips: ["BCR-ABL quantitative PCR and cytogenetics at diagnosis — baseline for monitoring", "Discuss which TKI is best for you — imatinib vs dasatinib vs nilotinib based on comorbidities and goals", "Ask about treatment-free remission (TFR) goal from the start", "Fertility counseling — imatinib is not recommended in pregnancy; dasatinib is teratogenic"],
+    };
+  }
+
+  // ===== NHL (Non-Hodgkin's Lymphoma) =====
+  if (type === "nhl") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const isAggressive = true; // DLBCL most common
+    return {
+      cancerType: "Non-Hodgkin's Lymphoma (NHL)", stage, ageGroup: age,
+      bestCase: { label: "Complete remission — potentially cured", pct: s <= 2 ? 75 : 55, desc: s <= 2 ? "Early-stage aggressive NHL (DLBCL) treated with R-CHOP x3–4 cycles + radiation achieves cure in ~75% of cases. Indolent lymphomas (follicular) may never require treatment." : "R-CHOP x6–8 cycles achieves CR in ~60–70% of Stage 3–4 DLBCL. Event-free at 2 years is a major milestone — correlates strongly with cure." },
+      typicalCase: { label: "R-CHOP chemotherapy → complete remission", pct: s <= 2 ? 65 : 50, desc: "Rituximab + CHOP (cyclophosphamide, doxorubicin, vincristine, prednisone) — standard backbone for B-cell NHL. Anti-CD20 therapy (rituximab) added in 2000 dramatically improved DLBCL outcomes. Polatuzumab-R-CHP (pola-R-CHP) now standard for high-risk DLBCL." },
+      worstCase: { label: "Refractory or relapsed NHL", pct: s <= 2 ? 25 : 40, desc: "Relapsed/refractory DLBCL: salvage chemotherapy (R-ICE, R-DHAP) + autologous stem cell transplant. CAR-T cell therapy (axicabtagene, tisagenlecleucel, lisocabtagene) — transformative results for relapsed DLBCL. Indolent NHL may transform to aggressive histology (Richter transformation)." },
+      treatmentOverview: [
+        "**DLBCL (most common)**: Pola-R-CHP x6 cycles (polatuzumab + rituximab + CHP) — improved EFS vs R-CHOP",
+        "**Stage 1–2 DLBCL**: R-CHOP x3–4 cycles + involved-site radiation — highly curative",
+        "**Follicular lymphoma**: Often watch-and-wait for low-burden disease; R-CHOP or BR for high-burden",
+        "**Mantle cell lymphoma**: R-CHOP + rituximab maintenance; BTK inhibitors (ibrutinib) for relapse",
+        "**CNS prophylaxis**: Intrathecal MTX or CNS-directed therapy for high-risk DLBCL",
+        "**CAR-T cell therapy**: Axicabtagene, tisagenlecleucel — standard second-line for relapsed DLBCL in eligible patients",
+        "**BTK inhibitors**: Ibrutinib, zanubrutinib — for mantle cell, CLL/SLL, marginal zone lymphoma",
+      ],
+      keyFacts: [
+        `5-year survival DLBCL Stage ${s}: **~${s <= 2 ? 75 : 55}%** (improving with CAR-T for relapse)`,
+        "2-year event-free survival (EFS) is a strong predictor of cure in DLBCL",
+        "CD20+ B-cell NHL: rituximab dramatically improved outcomes from 2000 onward",
+        "CAR-T cell therapy: 40% of relapsed/refractory DLBCL achieve durable complete remission",
+        "Follicular lymphoma: indolent — median survival 12–15 years with modern treatment",
+      ],
+      hopefulNote: s <= 2 ? "Early-stage aggressive NHL is highly curable with modern chemo-immunotherapy. Many patients achieve durable complete remission." : "Advanced NHL has been transformed by rituximab, polatuzumab, and CAR-T cell therapy. Even relapsed/refractory DLBCL now has curative options with CAR-T.",
+      timeToTreatment: "Biopsy for immunophenotyping/molecular typing needed before treatment. Aggressive histologies (DLBCL): treatment starts within 1–2 weeks. Indolent: may observe.",
+      waitingTips: ["Biopsy adequate tissue for full immunophenotyping (CD20, BCL2, BCL6, MYC, Ki-67)", "PET-CT for staging is essential before treatment", "Double-hit lymphoma (BCL2+MYC rearrangement): needs more aggressive induction — ask specifically", "Hepatitis B testing — rituximab can reactivate HBV; antiviral prophylaxis needed if positive"],
+    };
+  }
+
+  // ===== BRAIN TUMOR =====
+  if (type === "brain") {
+    const grade = parseInt(stage.replace(/\D/g, "")) || 2;
+    const isGBM = grade === 4;
+    const pcts = [90, 75, 35, 15];
+    const pct = pcts[Math.min(grade - 1, 3)];
+    return {
+      cancerType: "Brain Tumor / Glioma", stage: stage || `Grade ${grade}`, ageGroup: age,
+      bestCase: { label: isGBM ? "Extended survival with temozolomide + tumor-treating fields" : "Long-term remission with surgery ± radiation", pct: Math.min(pct + 15, 95), desc: isGBM ? "GBM with MGMT promoter methylation (~45%): median OS 22–24 months with temozolomide + radiation, with a subset achieving 5+ year survival. MGMT methylation is the strongest positive prognostic factor." : "IDH-mutant Grade 2–3 gliomas have 10+ year median survival with surgery, radiation, and PCV or temozolomide chemotherapy. Some patients remain disease-free for decades." },
+      typicalCase: { label: isGBM ? "Surgery + chemoradiation + maintenance temozolomide" : "Maximal safe resection + radiation ± chemo", pct, desc: isGBM ? "Maximal safe resection → concurrent temozolomide + radiation (Stupp protocol) → 6 months adjuvant temozolomide + tumor-treating fields (Optune device). Median OS 16–22 months." : "IDH-mutant Grade 2: surgery + radiation + 12 cycles temozolomide (or PCV). IDH-mutant Grade 3: more aggressive approach. Regular MRI every 3–6 months." },
+      worstCase: { label: "Early recurrence or progression", pct: 100 - pct, desc: isGBM ? "GBM almost universally recurs. Second-line options: bevacizumab (reduces edema/improves QoL), lomustine, re-irradiation. Clinical trials are important at recurrence." : "IDH-mutant gliomas may transform to higher grade at recurrence. Secondary GBM from IDH-mutant Grade 2–3 has better outcomes than primary GBM." },
+      treatmentOverview: [
+        isGBM
+          ? "**Surgery**: Maximal safe resection — improve QoL, reduce mass effect, confirm diagnosis"
+          : "**Surgery**: Maximal safe resection — larger extent of resection → better outcomes",
+        isGBM
+          ? "**Stupp protocol**: Concurrent temozolomide + radiation (60 Gy/30 fractions) → 6 months adjuvant temozolomide"
+          : "**Radiation**: 54–59.4 Gy for Grade 3; sometimes deferred for Grade 2 IDH-mutant",
+        "**Tumor-treating fields (Optune)**: Wearable device — improves OS in GBM when added to temozolomide",
+        "**IDH1 inhibitor (ivosidenib)**: For IDH1-mutant gliomas — vorasidenib (IDH1/2) approved 2023",
+        "**MGMT methylation testing**: Most important GBM biomarker — guides temozolomide benefit",
+        "**Bevacizumab**: For recurrent GBM — reduces edema, improves symptoms",
+        "**Clinical trials**: Immunotherapy, CAR-T, oncolytic viruses — active research",
+      ],
+      keyFacts: [
+        isGBM
+          ? "GBM 5-year survival: **~10%** overall; **~20–25%** with MGMT methylation"
+          : `Grade ${grade} IDH-mutant glioma: median survival **${grade === 2 ? "12–15 years" : "5–7 years"}**`,
+        "IDH mutation (Grade 2–3 gliomas): strongest positive prognostic factor",
+        "MGMT methylation: predicts temozolomide benefit in GBM — test at diagnosis",
+        "Tumor-treating fields: portable device worn on scalp — improves GBM OS (EF-14 trial)",
+        "Vorasidenib: first IDH-targeted therapy approved specifically for low-grade glioma (2023)",
+      ],
+      hopefulNote: isGBM ? "GBM is the hardest brain tumor to treat — honesty matters here. But outcomes are improving: MGMT-methylated GBM has a subset of long-term survivors, and tumor-treating fields have extended median survival. Clinical trials are actively testing immunotherapy and targeted approaches." : "IDH-mutant Grade 2–3 gliomas are slow-growing cancers where many patients live 10–15+ years with treatment. Vorasidenib (2023) offers the first targeted oral therapy. Modern surgery and radiation preserve function while controlling disease.",
+      timeToTreatment: "Surgery often within 1–2 weeks. Post-op pathology including IDH, MGMT, and 1p/19q takes 2–3 weeks. Treatment planning follows.",
+      waitingTips: ["IDH1/2 mutation, MGMT methylation, 1p/19q codeletion, TERT promoter testing — critical molecular profiling", "Dexamethasone for brain swelling — discuss dose tapering plan", "Ask about awake craniotomy if tumor near speech/motor areas — preserves function", "Tumor-treating fields (Optune) — discuss eligibility before finishing radiation"],
+    };
+  }
+
+  // ===== NEUROBLASTOMA =====
+  if (type === "neuroblastoma") {
+    const isPediatric = age === "child" || age === "teen";
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const isHighRisk = s >= 4;
+    return {
+      cancerType: "Neuroblastoma", stage, ageGroup: age,
+      bestCase: { label: isHighRisk ? "Complete response to intensive multimodal therapy" : "Surgical cure — observation only", pct: isHighRisk ? 50 : 95, desc: isHighRisk ? "High-risk neuroblastoma treated with induction chemo + surgery + tandem ASCT + dinutuximab + isotretinoin: ~50% long-term EFS in recent COG trials. MYCN amplification worsens prognosis but patients can still be cured." : "Low-risk (Stage 1–2A/B without MYCN amplification): surgery alone is curative in >95% of cases. Stage 4S infants often undergo spontaneous regression." },
+      typicalCase: { label: isHighRisk ? "Induction chemo → surgery → ASCT → immunotherapy" : "Surgery ± observation", pct: isHighRisk ? 40 : 90, desc: isHighRisk ? "COG ANBL1232/1801 protocol: 6 cycles induction (carboplatin, cyclophosphamide, etoposide, doxorubicin) → surgery → tandem ASCT → radiation → dinutuximab + GM-CSF + IL-2 + isotretinoin maintenance." : "Low-risk: surgical resection. Intermediate-risk (Stage 3 without MYCN): 4–8 cycles carboplatin/cyclophosphamide/doxorubicin/etoposide then reassess." },
+      worstCase: { label: "Refractory or relapsed high-risk disease", pct: isHighRisk ? 50 : 5, desc: "High-risk neuroblastoma relapse has poor prognosis. Options: naxitamab (anti-GD2), DFMO (eflornithine), lorlatinib for ALK-mutated, MIBG therapy. Clinical trials essential. Humanized anti-GD2 antibodies are showing promise." },
+      treatmentOverview: [
+        "**Low-risk**: Surgery alone — watch and wait for Stage 4S (may spontaneously regress)",
+        "**Intermediate-risk**: 4–8 cycles moderate chemotherapy + surgery",
+        "**High-risk induction**: 6 cycles intensive chemotherapy (COG ANBL protocol)",
+        "**Surgery**: Resection of primary tumor after induction",
+        "**Tandem ASCT**: Two autologous stem cell transplants — improves survival vs single",
+        "**Radiation**: To primary tumor bed and MIBG-avid sites",
+        "**Dinutuximab (anti-GD2)**: Immunotherapy maintenance — FDA approved, improves EFS by 20%",
+        "**Isotretinoin (13-cis-retinoic acid)**: 6 months differentiation therapy post-transplant",
+      ],
+      keyFacts: [
+        `High-risk neuroblastoma 5-year EFS: **~45–50%** with modern protocol`,
+        "MYCN amplification: high-risk feature regardless of stage",
+        "Stage 4S infants <18 months: often spontaneously regress — watch and wait",
+        "Dinutuximab (anti-GD2) immunotherapy: FDA approved — improved EFS in high-risk (COG trial)",
+        "ALK mutation (~10%): targetable with crizotinib/lorlatinib — clinical trials",
+      ],
+      hopefulNote: isHighRisk ? "High-risk neuroblastoma is one of the most challenging childhood cancers, but outcomes have genuinely improved. Tandem transplant protocols and dinutuximab immunotherapy have improved 5-year survival to ~50% in recent trials. Clinical trials are actively advancing new targeted and immunotherapy approaches." : "Low-risk neuroblastoma is highly curable with surgery, and Stage 4S infants often spontaneously regress — a remarkable biological feature unique to this cancer.",
+      timeToTreatment: "High-risk disease: chemotherapy starts within 1–2 weeks. Staging includes MIBG scan, bone marrow biopsy, MYCN amplification testing.",
+      waitingTips: ["MYCN amplification testing — most critical risk-stratification factor", "MIBG (iobenguane) scan for staging — different from standard PET", "Bilateral bone marrow biopsies for staging", "Consider enrollment in COG ANBL clinical trials — best outcomes at specialist centers"],
+    };
+  }
+
+  // ===== OSTEOSARCOMA =====
+  if (type === "osteosarcoma") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 2;
+    const hasMetastases = s >= 4 || stage.includes("4");
+    return {
+      cancerType: "Osteosarcoma", stage, ageGroup: age,
+      bestCase: { label: "Limb-salvage surgery + cure with neoadjuvant chemo", pct: hasMetastases ? 25 : 70, desc: hasMetastases ? "~20–30% of metastatic osteosarcoma patients are long-term survivors if metastases are resectable. Complete surgical resection of all disease is the key factor." : "Good histological response to neoadjuvant chemotherapy (≥90% necrosis): 5-year survival ~70–80%. Limb-salvage surgery preserves function in ~85% of patients." },
+      typicalCase: { label: "MAP chemotherapy + limb-salvage surgery", pct: hasMetastases ? 20 : 60, desc: hasMetastases ? "Metastatic OS: 3-year EFS ~20–30%. Surgical resection of all metastatic sites (typically lung) + chemotherapy. Gemcitabine + docetaxel, sorafenib active as second-line." : "MAP protocol: methotrexate + doxorubicin + cisplatin (10 weeks neoadjuvant) → surgery → 18 weeks adjuvant MAP. Histological response assessed at surgery." },
+      worstCase: { label: "Poor chemo response or unresectable disease", pct: hasMetastases ? 75 : 35, desc: "Poor responders (<90% necrosis) to neoadjuvant chemo have worse outcomes but still treated with full protocol. Relapsed osteosarcoma: median survival 6–12 months. Samarium-153, sorafenib, regorafenib, mifamurtide — active second-line options." },
+      treatmentOverview: [
+        "**Neoadjuvant MAP chemotherapy**: 10 weeks before surgery (methotrexate + doxorubicin + cisplatin)",
+        "**Limb-salvage surgery**: Resection + endoprosthetic reconstruction — preserves function in ~85%",
+        "**Amputation**: Only if limb-salvage not feasible — equivalent survival, but different functional outcome",
+        "**Histological response**: ≥90% necrosis = good responder; guides adjuvant treatment discussion",
+        "**Adjuvant MAP**: 18 further weeks post-surgery",
+        "**Mifamurtide (MTP-PE)**: Immunomodulator — approved in Europe, some evidence for improved OS",
+        "**Metastatic**: Surgical resection of lung mets + chemotherapy; gemcitabine/docetaxel for relapse",
+      ],
+      keyFacts: [
+        `Localized osteosarcoma 5-year survival: **~65–70%**`,
+        "Metastatic at diagnosis (~20%): 5-year survival ~20–30%",
+        "Histological response to neoadjuvant chemo is the strongest prognostic factor",
+        "Limb-salvage surgery achieves equivalent survival to amputation — preferred when feasible",
+        "Peak incidence: teenagers during growth spurt — most common primary bone tumor in children/teens",
+      ],
+      hopefulNote: "Localized osteosarcoma treated at specialist centers with MAP chemotherapy and limb-salvage surgery achieves long-term cure in ~65–70% of patients. Most patients keep their limb and return to active lives. For the remaining patients, modern salvage approaches and clinical trials continue to advance outcomes.",
+      timeToTreatment: "Biopsy should be done at treating center — improper biopsy compromises surgery. Neoadjuvant chemo starts within 2 weeks of diagnosis.",
+      waitingTips: ["Biopsy MUST be done at the treating orthopedic oncology center — tunnel biopsy by specialist is critical", "Staging CT chest for lung metastases before treatment", "Bone scan or PET for skip lesions and distant bone involvement", "Hearing assessment before cisplatin — ototoxicity monitoring throughout treatment"],
+    };
+  }
+
+  // ===== RHABDOMYOSARCOMA =====
+  if (type === "rhabdomyosarcoma") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    return {
+      cancerType: "Rhabdomyosarcoma (RMS)", stage, ageGroup: age,
+      bestCase: { label: "Surgical cure ± chemotherapy (low-risk)", pct: s <= 2 ? 85 : 50, desc: s <= 2 ? "Low-risk RMS (embryonal histology, Stage 1–2, completely resected): 5-year OS >85% with VAC chemotherapy ± radiation. Orbital RMS has excellent outcomes with chemotherapy alone." : "Intermediate-risk RMS: 5-year OS ~65–75%. Complete resection + VAC or VI chemotherapy. Favorable sites (orbit, head/neck non-parameningeal): better outcomes." },
+      typicalCase: { label: "VAC chemotherapy + surgery ± radiation", pct: s <= 2 ? 75 : 45, desc: "Vincristine + actinomycin-D + cyclophosphamide (VAC) — backbone chemotherapy. Surgery to achieve R0 resection when possible. Radiation for incompletely resected or high-risk disease. Total therapy duration 9–12 months." },
+      worstCase: { label: "Metastatic or alveolar histology with PAX-FOXO1 fusion", pct: s >= 4 ? 70 : 20, desc: "Metastatic RMS: 5-year OS ~20–30%. PAX-FOXO1 fusion-positive alveolar RMS: aggressive — requires intensified treatment. Relapsed RMS has poor prognosis — clinical trials essential." },
+      treatmentOverview: [
+        "**Risk stratification**: Low / intermediate / high-risk based on stage, histology, site, resection status",
+        "**VAC chemotherapy**: Vincristine + actinomycin-D + cyclophosphamide — standard backbone (COG protocols)",
+        "**Surgery**: R0 resection if feasible without major functional loss",
+        "**Radiation**: For intermediate/high-risk, unresected, or Group III disease",
+        "**Orbital RMS**: Chemotherapy + radiation — surgery avoided to preserve eye",
+        "**Alveolar histology**: More aggressive — check PAX-FOXO1 fusion status",
+        "**High-risk / relapsed**: Irinotecan + temozolomide, vinorelbine, clinical trials",
+      ],
+      keyFacts: [
+        `Low-risk embryonal RMS 5-year OS: **>85%**`,
+        "Alveolar histology with PAX-FOXO1 fusion: higher risk — intensified treatment",
+        "Orbital location: excellent prognosis — chemotherapy + radiation preserves vision",
+        "Parameningeal sites (nasopharynx, middle ear): needs cranial radiation due to meningeal risk",
+        "Embryonal histology: better prognosis than alveolar",
+      ],
+      hopefulNote: "Low-risk rhabdomyosarcoma, especially embryonal histology, has excellent outcomes with modern chemotherapy protocols. Many children are cured and return to normal lives. Even intermediate-risk disease achieves good outcomes at specialist pediatric oncology centers.",
+      timeToTreatment: "Biopsy for histology and fusion testing before treatment. Chemotherapy typically starts within 2 weeks.",
+      waitingTips: ["Histological subtype (embryonal vs alveolar) and PAX-FOXO1 fusion testing critical before treatment", "Consider enrollment in COG ARST clinical trials", "Fertility preservation discussion before chemotherapy", "MRI for local staging — CT chest for pulmonary metastases"],
+    };
+  }
+
+  // ===== BLADDER CANCER =====
+  if (type === "bladder") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const pcts = [96, 47, 36, 5];
+    const pct = pcts[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Bladder Cancer", stage, ageGroup: age,
+      bestCase: { label: s <= 2 ? "TURBT + BCG → durable remission" : "Radical cystectomy → cure", pct: Math.min(pct + 10, 98), desc: s <= 2 ? "Non-muscle-invasive bladder cancer (NMIBC): TURBT resection + intravesical BCG immunotherapy achieves durable remission in ~60–70% of high-risk cases." : "Muscle-invasive bladder cancer (MIBC): neoadjuvant cisplatin-based chemo + radical cystectomy achieves cure in 40–60%." },
+      typicalCase: { label: s <= 2 ? "TURBT + intravesical BCG" : "Neoadjuvant chemo + cystectomy", pct, desc: s <= 2 ? "Transurethral resection (TURBT) to remove visible tumor + intravesical BCG instillations (6-week induction + maintenance). Regular cystoscopy surveillance." : "Neoadjuvant gemcitabine + cisplatin x3–4 cycles → radical cystectomy (robotic) + urinary diversion. Pembrolizumab maintenance for high-risk Stage 2 (IMvigor011 trial)." },
+      worstCase: { label: "Recurrence requiring cystectomy (early) or metastatic disease (advanced)", pct: 100 - pct, desc: "NMIBC recurrence is common (~50–70%) — progression to MIBC in ~15–20% of high-grade cases. Metastatic urothelial: enfortumab vedotin + pembrolizumab (EV-302 trial) — significant OS benefit, now first-line standard." },
+      treatmentOverview: [
+        "**NMIBC (T1/Ta/Tis)**: TURBT + intravesical BCG (6-week induction + 1–3 year maintenance)",
+        "**BCG-unresponsive NMIBC**: Pembrolizumab, nadofaragene (gene therapy), nogapendekin alfa",
+        "**MIBC (T2+)**: Neoadjuvant cisplatin-based chemo + radical cystectomy",
+        "**Bladder preservation**: Trimodal therapy (TURBT + chemoradiation) for select MIBC",
+        "**Metastatic 1st-line**: Enfortumab vedotin + pembrolizumab (EV-302) — improved OS vs chemo",
+        "**FGFR3 mutation (~15%)**: Erdafitinib targeted therapy for FGFR-altered urothelial cancer",
+      ],
+      keyFacts: [
+        `5-year survival Stage ${s}: **~${pct}%**`,
+        "Non-muscle-invasive bladder cancer: high recurrence but low progression with BCG",
+        "Enfortumab vedotin + pembrolizumab: transformed metastatic urothelial cancer (EV-302 trial)",
+        "FGFR3 mutation: targetable with erdafitinib — test at diagnosis of metastatic disease",
+        "Bladder-preserving trimodal therapy: equivalent to cystectomy in selected patients",
+      ],
+      hopefulNote: s <= 2 ? "Non-muscle-invasive bladder cancer is highly manageable with TURBT and BCG. Most patients keep their bladder and with regular surveillance maintain excellent quality of life." : "Muscle-invasive bladder cancer outcomes have improved significantly. Neoadjuvant chemotherapy before surgery improves survival, and new immunotherapy combinations have transformed metastatic disease.",
+      timeToTreatment: "TURBT typically within 2–4 weeks of diagnosis. BCG starts 3–4 weeks after TURBT. MIBC: neoadjuvant chemo starts 2–3 weeks after staging.",
+      waitingTips: ["Pathology must specify T-stage, grade, and presence of LVI — request complete report", "CT urogram to look for upper tract urothelial tumors", "Cisplatin eligibility assessment (renal function, ECOG performance) before neoadjuvant chemo", "Ask about bladder-preservation trimodal therapy if cystectomy not acceptable"],
+    };
+  }
+
+  // ===== KIDNEY (RENAL CELL) CANCER =====
+  if (type === "kidney") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const pcts = [93, 74, 55, 13];
+    const pct = pcts[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Kidney (Renal Cell) Cancer", stage, ageGroup: age,
+      bestCase: { label: s <= 2 ? "Surgical cure with partial nephrectomy" : "Durable complete response to immunotherapy", pct: Math.min(pct + 10, 99), desc: s <= 2 ? "Stage 1 RCC (<7cm): partial nephrectomy (kidney-sparing) is curative in >90% of patients. Active surveillance appropriate for small (<3cm) incidental tumors in elderly." : "Metastatic RCC with nivolumab + ipilimumab (CheckMate 214) or cabozantinib + nivolumab: ~10–15% complete responses, many durable for 5+ years." },
+      typicalCase: { label: s <= 2 ? "Partial or radical nephrectomy" : "Combination immunotherapy (ipi/nivo or cabo/nivo)", pct, desc: s <= 2 ? "Robotic partial nephrectomy for T1–T2 tumors. No adjuvant therapy standard for Stage 1–2 (pembrolizumab adjuvant for high-risk Stage 2–3: KEYNOTE-564)." : "First-line: nivolumab + ipilimumab (CheckMate 214) for intermediate/poor risk; cabozantinib + nivolumab or axitinib + pembrolizumab for favorable risk. Regular CT restaging." },
+      worstCase: { label: "Rapid progression or poor-risk features", pct: 100 - pct, desc: "Poor-risk metastatic RCC (Heng criteria) has median OS ~12–18 months with modern combinations. Non-clear cell RCC (papillary, chromophobe): less responsive — everolimus, cabozantinib, clinical trials." },
+      treatmentOverview: [
+        "**Stage 1 (≤7cm)**: Partial nephrectomy (kidney-sparing) — standard of care",
+        "**Stage 2–3**: Radical or partial nephrectomy; adjuvant pembrolizumab for high-risk (KEYNOTE-564)",
+        "**Metastatic clear cell**: Doublet immunotherapy — ipi/nivo (CheckMate 214) or PD-1 + VEGFR TKI",
+        "**Cabozantinib + nivolumab**: Excellent across all IMDC risk groups (CheckMate 9ER)",
+        "**Axitinib + pembrolizumab**: Strong option — KEYNOTE-426 trial",
+        "**VHL mutation (clear cell)**: Belzutifan (HIF-2α inhibitor) for VHL disease-associated RCC",
+        "**Second-line**: Cabozantinib, everolimus, or clinical trial",
+      ],
+      keyFacts: [
+        `5-year survival Stage ${s}: **~${pct}%**`,
+        "Clear cell RCC (~75%): responds well to immunotherapy combinations",
+        "Complete responses with ipi/nivo in 10–15%: some are durable at 5+ years",
+        "Adjuvant pembrolizumab: reduces recurrence risk in high-risk Stage 2–3 (KEYNOTE-564)",
+        "VHL/HIF-2α pathway: belzutifan approved for VHL disease-associated RCC and beyond",
+      ],
+      hopefulNote: s <= 2 ? "Early-stage kidney cancer is highly curable with minimally invasive surgery. Most patients keep their kidney function and return to normal life." : "Metastatic kidney cancer outcomes have been transformed by combination immunotherapy. Durable complete responses — effectively cured — are seen in 10–15% of patients with ipi/nivo. Many others achieve years of disease control.",
+      timeToTreatment: "Surgery for localized disease typically within 2–4 weeks. Systemic therapy for metastatic: starts within 2–4 weeks of staging.",
+      waitingTips: ["IMDC risk score calculation guides choice between immunotherapy combinations", "Pathology confirmation of clear cell vs non-clear cell — guides treatment algorithm", "VHL mutation testing for potential belzutifan eligibility", "Ask about active surveillance for small (<3cm) incidental tumors in older patients"],
+    };
+  }
+
   // ===== GENERIC FALLBACK =====
   // Generic fallback
   return {

@@ -71,8 +71,8 @@ const cancerTypes = [
 ];
 
 const stats = [
-  { value: "20+",  label: "Cancer types covered with detailed outcome data" },
-  { value: "30+",  label: "Real published cases in our similarity database" },
+  { value: "25+",  label: "Cancer types covered with detailed outcome data" },
+  { value: "50+",  label: "Real published cases in our similarity database" },
   { value: "24/7", label: "AI cancer specialist — available any time, any question" },
 ];
 
