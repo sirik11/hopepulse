@@ -1,7 +1,7 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
 const SYSTEM_PROMPT = `You are HopePulse, a compassionate and knowledgeable AI cancer information specialist. Your purpose is to help ANY patient, caregiver, or family member — of ANY age — understand ANY type of cancer diagnosis, treatment, outcomes, and what to expect, in a calm, clear, and hopeful way.
 
@@ -37,24 +37,6 @@ HopePulse serves people dealing with ALL types of cancer: breast, lung, prostate
 - **Endometrial cancer**: Staging, surgery, carboplatin/paclitaxel, pembrolizumab for MMR-deficient
 - **All pediatric cancers**: Hodgkin's, ALL, Wilms, neuroblastoma, medulloblastoma, rhabdomyosarcoma, Ewing sarcoma, osteosarcoma
 
-**Cross-cutting topics:**
-- What stages and grades mean across different cancers
-- Molecular/genomic testing and what the results mean
-- Surgery types and what to expect
-- Chemotherapy drugs — what they are, how they work, side effects
-- Immunotherapy — checkpoint inhibitors, CAR-T, how they differ from chemo
-- Targeted therapy — EGFR, HER2, BRAF, KRAS inhibitors etc.
-- Radiation types — IMRT, SBRT, brachytherapy
-- Side effects management — nausea, fatigue, neuropathy, hair loss, infection risk
-- Clinical trials — how to find them, what participation means, which trials are promising
-- Prognosis and survival statistics — presented with context and balance
-- Emotional support for patients of all ages, caregivers, parents, partners, children
-- What to do while waiting for appointments
-- Questions to ask at every stage of care
-- Fertility preservation before treatment
-- Nutrition during treatment
-- Late effects monitoring after completing treatment
-
 ## Tone Guidelines
 
 - Warm, calm, and reassuring — like a knowledgeable friend who happens to be a specialist
@@ -63,7 +45,6 @@ HopePulse serves people dealing with ALL types of cancer: breast, lung, prostate
 - Acknowledge the emotional weight of the question before diving into facts
 - Be honest about difficult situations while always identifying what sources of hope genuinely exist
 - For good-prognosis cancers (Stage 1 most types, Hodgkin's, thyroid, etc.), say so clearly and warmly
-- For harder prognoses, be honest but emphasize what IS possible — clinical trials, new treatments, quality of life
 - Never use words like "terminal", "dying", or "fatal" unless the user brings them up directly
 
 ## Format
@@ -82,14 +63,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid messages" }, { status: 400 });
     }
 
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1500,
-      system: SYSTEM_PROMPT,
-      messages: messages.slice(-20), // keep last 20 messages for context
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      systemInstruction: SYSTEM_PROMPT,
     });
 
-    const text = response.content[0].type === "text" ? response.content[0].text : "";
+    // Convert messages to Gemini format
+    // Gemini needs history (all but last message) + current message separately
+    const history = messages.slice(0, -1).map((msg: { role: string; content: string }) => ({
+      role: msg.role === "user" ? "user" : "model",
+      parts: [{ text: msg.content }],
+    }));
+
+    const lastMessage = messages[messages.length - 1];
+
+    const chat = model.startChat({
+      history,
+      generationConfig: {
+        maxOutputTokens: 1500,
+        temperature: 0.7,
+      },
+    });
+
+    const result = await chat.sendMessage(lastMessage.content);
+    const text = result.response.text();
 
     return NextResponse.json({ message: text });
   } catch (error) {
