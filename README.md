@@ -214,4 +214,6 @@ For every cancer. Every stage. Every age. Every family.
 
 ## 📄 License
 
-MIT License — free to use, modify, and share.
+Copyright © 2026 Sirik. All rights reserved.
+
+This project and its source code are proprietary. No part of this codebase may be copied, modified, distributed, or used in any form without explicit written permission from the owner.
