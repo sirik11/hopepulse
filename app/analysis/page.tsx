@@ -207,7 +207,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [99, 99, 86, 29];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Breast Cancer", stage, ageGroup,
+      cancerType: "Breast Cancer", stage, ageGroup: age,
       bestCase: { label: "Long-term remission / cure", pct, desc: s <= 2 ? "Early-stage breast cancer is highly curable. Lumpectomy or mastectomy + radiation ± chemotherapy typically achieves durable remission." : "With surgery, chemotherapy and targeted therapy, remission is achievable even in advanced stages." },
       typicalCase: { label: s <= 2 ? "Surgery + adjuvant therapy → remission" : "Chemotherapy + targeted therapy → disease control", pct: Math.max(pct - 8, 20), desc: s <= 2 ? "Standard treatment: surgery, 3–5 weeks radiation, hormone therapy for ER+ tumors. Chemo added for higher-risk cases." : "Neoadjuvant chemo often shrinks tumor before surgery. Targeted agents (trastuzumab, PARP inhibitors) improve outcomes significantly." },
       worstCase: { label: "Recurrence or metastatic progression", pct: 100 - pct, desc: "Recurrence risk depends on subtype (ER+, HER2+, TNBC), stage, and molecular markers. Even metastatic breast cancer is treatable — many patients live years on systemic therapy." },
@@ -239,7 +239,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [68, 47, 26, 8];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Lung Cancer", stage, ageGroup,
+      cancerType: "Lung Cancer", stage, ageGroup: age,
       bestCase: { label: s <= 2 ? "Surgical cure" : "Long-term disease control", pct: Math.min(pct + 15, 90), desc: s <= 2 ? "Early-stage lung cancer treated with surgery (lobectomy) has 5-year survival up to 80–90% for Stage 1A. EGFR/ALK mutations respond dramatically to targeted therapy." : "With immunotherapy and/or targeted therapy, many Stage 3–4 patients achieve years of disease control." },
       typicalCase: { label: s <= 2 ? "Surgery + adjuvant targeted/immunotherapy" : "Chemoimmunotherapy → disease control", pct, desc: s <= 2 ? "VATS lobectomy (minimally invasive). Adjuvant osimertinib for EGFR+ Stage 1B–3A improves DFS significantly." : "Pembrolizumab + chemotherapy (KEYNOTE-189) for non-squamous; PD-L1 high tumors can respond to immunotherapy alone." },
       worstCase: { label: "Rapid progression", pct: 100 - pct, desc: "Lung cancer without driver mutations and low PD-L1 has more limited options. Stage 4 without actionable mutations is challenging, though combination immunotherapy has improved median survival." },
@@ -270,7 +270,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [99, 99, 99, 32];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Prostate Cancer", stage, ageGroup,
+      cancerType: "Prostate Cancer", stage, ageGroup: age,
       bestCase: { label: s <= 3 ? "Cure with primary treatment" : "Long-term disease control", pct, desc: s <= 3 ? "Prostate cancer Stage 1–3 is highly curable with surgery or radiation. PSA monitoring detects recurrence early." : "Metastatic prostate cancer is managed with hormonal therapy + newer agents (enzalutamide, abiraterone, docetaxel). Many patients live 5+ years." },
       typicalCase: { label: s <= 2 ? "Surgery or radiation → undetectable PSA" : "Hormonal therapy → disease control", pct: Math.max(pct - 5, 25), desc: s <= 2 ? "Robotic prostatectomy or external beam radiation (EBRT + brachytherapy) achieve equivalent long-term results." : "ADT (hormonal therapy) is the backbone; newer ARPIs (abiraterone, enzalutamide) dramatically improve survival in advanced disease." },
       worstCase: { label: "Biochemical recurrence or progression", pct: Math.min(100 - pct + 15, 70), desc: "PSA rise after treatment (biochemical recurrence) can be managed with salvage radiation or ADT. Castration-resistant prostate cancer (CRPC) has multiple effective treatments." },
@@ -302,7 +302,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [91, 82, 61, 12];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Colorectal Cancer", stage, ageGroup,
+      cancerType: "Colorectal Cancer", stage, ageGroup: age,
       bestCase: { label: "Surgical cure / long-term remission", pct, desc: "Surgery alone for Stage 1–2 colon cancer (without lymph node involvement) achieves cure in most cases. MSI-H (microsatellite unstable) tumors have better prognosis and respond to immunotherapy." },
       typicalCase: { label: s <= 3 ? "Surgery + FOLFOX chemotherapy → remission" : "FOLFOX or FOLFIRI ± bevacizumab/cetuximab", pct: Math.max(pct - 8, 10), desc: s <= 2 ? "Laparoscopic/robotic colectomy + 6 months adjuvant FOLFOX for higher-risk Stage 2 or Stage 3. Cure rates remain good." : "For metastatic disease, combination chemotherapy + biologics controls disease for 1–2+ years. Liver-limited metastases are potentially curable with surgery." },
       worstCase: { label: "Recurrence or distant metastases", pct: 100 - pct, desc: "Recurrence typically occurs within first 3 years. Liver metastases develop in ~50% of Stage 4 cases — some are resectable. RAS/BRAF mutation status guides choice of biologic therapy." },
@@ -334,7 +334,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [98, 90, 68, 30];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Melanoma", stage, ageGroup,
+      cancerType: "Melanoma", stage, ageGroup: age,
       bestCase: { label: "Surgical cure + immunotherapy protection", pct, desc: s <= 2 ? "Wide local excision cures most Stage 1–2 melanomas. Adjuvant pembrolizumab for Stage 2B+ reduces recurrence risk by 35%." : "Immunotherapy (ipi/nivo or pembrolizumab) achieves complete responses in 15–20% of Stage 4 patients — some are durable for 10+ years." },
       typicalCase: { label: s <= 2 ? "WLE + SLNB ± adjuvant immunotherapy" : "Immunotherapy or BRAF/MEK targeted therapy", pct: Math.max(pct - 10, 15), desc: s <= 3 ? "Surgery + sentinel lymph node biopsy. Adjuvant nivolumab or pembrolizumab for Stage 3–4A/B." : "First-line: pembrolizumab or nivolumab ± ipilimumab (if BRAF wild-type). BRAF V600E+: dabrafenib + trametinib targeted therapy." },
       worstCase: { label: "Recurrence or brain metastases", pct: 100 - pct, desc: "Brain metastases are common in advanced melanoma. Stereotactic radiosurgery and immunotherapy can control CNS disease. Overall, modern immunotherapy has transformed Stage 4 outcomes dramatically." },
@@ -362,7 +362,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
   // ===== THYROID CANCER =====
   if (type === "thyroid") {
     return {
-      cancerType: "Thyroid Cancer", stage, ageGroup,
+      cancerType: "Thyroid Cancer", stage, ageGroup: age,
       bestCase: { label: "Surgical cure — long-term disease-free", pct: 99, desc: "Papillary and follicular thyroid cancers (the most common types) have near-100% 5-year survival for Stage 1–2. Surgery is curative for the vast majority." },
       typicalCase: { label: "Thyroidectomy ± RAI → undetectable Tg", pct: 97, desc: "Total thyroidectomy + radioactive iodine (RAI) for intermediate/high-risk disease. Thyroglobulin (Tg) monitoring detects recurrence. Lifelong levothyroxine replacement." },
       worstCase: { label: "Recurrence or rare aggressive histology", pct: 5, desc: "Rare cases of poorly differentiated or anaplastic thyroid cancer are more aggressive. Medullary thyroid cancer (MTC) requires different treatment (not RAI-sensitive). Recurrence in well-differentiated cancer is generally treatable." },
@@ -393,7 +393,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [93, 70, 41, 31];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Ovarian Cancer", stage, ageGroup,
+      cancerType: "Ovarian Cancer", stage, ageGroup: age,
       bestCase: { label: "Surgical debulking + complete response", pct: Math.min(pct + 15, 99), desc: s <= 2 ? "Stage 1 ovarian cancer detected early (often incidentally) is highly curable with surgery ± chemotherapy." : "Optimal debulking surgery (no visible residual) + platinum-based chemo + PARP inhibitor maintenance (for BRCA-mutated) dramatically improves outcomes." },
       typicalCase: { label: "Surgery + carboplatin/paclitaxel + maintenance", pct, desc: "Total abdominal hysterectomy + bilateral salpingo-oophorectomy + omentectomy + peritoneal staging. Carboplatin/paclitaxel x6 cycles. PARP inhibitor maintenance for BRCA+ or HRD+ patients." },
       worstCase: { label: "Platinum-resistant recurrence", pct: 100 - pct, desc: "Most Stage 3–4 ovarian cancers relapse. Platinum-sensitive recurrence has more treatment options. Platinum-resistant disease is more challenging. Bevacizumab, PARP inhibitors, and clinical trials offer options." },
@@ -424,7 +424,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [92, 76, 51, 18];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Cervical Cancer", stage, ageGroup,
+      cancerType: "Cervical Cancer", stage, ageGroup: age,
       bestCase: { label: "Surgical cure", pct, desc: s <= 2 ? "Stage 1–2A cervical cancer treated with radical hysterectomy or chemoradiation achieves cure in most cases. Pap smear screening detects pre-cancerous lesions before cancer develops." : "Concurrent chemoradiation (cisplatin + radiation) is the standard for Stage 2B–4A. Pembrolizumab has transformed metastatic cervical cancer." },
       typicalCase: { label: s <= 2 ? "Radical hysterectomy or chemoradiation" : "Chemoradiation ± pembrolizumab", pct: Math.max(pct - 10, 10), desc: s <= 2 ? "Robotic radical hysterectomy + pelvic lymph node dissection for Stage 1B–2A. Equivalent results with chemoradiation." : "Cisplatin-based chemoradiation x5–6 weeks. Pembrolizumab added for PD-L1 CPS ≥1 (KEYNOTE-826 trial) — significantly improves survival." },
       worstCase: { label: "Locally advanced or metastatic progression", pct: 100 - pct, desc: "Locally recurrent or metastatic cervical cancer is challenging. Pembrolizumab + platinum chemotherapy (KEYNOTE-826) significantly improves outcomes. Bevacizumab adds survival benefit in first-line metastatic disease." },
@@ -455,7 +455,7 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
     const survivals = [44, 15, 12, 3];
     const pct = survivals[Math.min(s - 1, 3)];
     return {
-      cancerType: "Pancreatic Cancer", stage, ageGroup,
+      cancerType: "Pancreatic Cancer", stage, ageGroup: age,
       bestCase: { label: "Resection + adjuvant chemo — long-term survivor", pct: s <= 2 ? 35 : 12, desc: s <= 2 ? "Approximately 20–25% of patients with resected pancreatic cancer are alive at 5 years. FOLFIRINOX adjuvant therapy improves this to ~35% in fit patients. Some long-term survivors exist." : "A minority of patients with locally advanced or metastatic disease respond exceptionally well to FOLFIRINOX, achieving conversion to resectability." },
       typicalCase: { label: s <= 2 ? "Whipple + FOLFIRINOX → disease-free interval" : "FOLFIRINOX or gem/abraxane → disease control", pct, desc: s <= 2 ? "Pancreaticoduodenectomy (Whipple procedure) followed by 6 months mFOLFIRINOX or gemcitabine + capecitabine adjuvant chemotherapy." : "FOLFIRINOX or gemcitabine + nab-paclitaxel. Second-line: FOLFOX or nanoliposomal irinotecan (nal-IRI). Median survival 8–12 months for Stage 4." },
       worstCase: { label: "Early progression", pct: 100 - pct, desc: "Pancreatic cancer often progresses quickly. PS2 patients may not tolerate FOLFIRINOX — gemcitabine monotherapy is an alternative. Supportive care including pain management and biliary stent placement are important." },
