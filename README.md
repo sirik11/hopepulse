@@ -1,4 +1,4 @@
-# 💚 HopePulse
+# HopePulse
 
 > **AI-powered cancer support platform — compassionate, clear information for every type of cancer, every patient, every family.**
 
@@ -6,37 +6,39 @@ HopePulse was born from a personal experience — a family facing a cancer diagn
 
 ---
 
-## 🌐 Live App
+## Live App
 
 **[hopepulse.vercel.app](https://hopepulse.vercel.app)** *(deploy to get your live URL)*
 
 ---
 
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---|---|
-| 🤖 **AI Cancer Specialist Chat** | Ask anything about any cancer — powered by Google Gemini AI. Compassionate, medically accurate answers 24/7 |
-| 🔍 **Diagnosis Analyzer** | Enter cancer type, stage, and age — get best-case, typical, and worst-case outcomes based on real published statistics |
-| 👥 **Similar Cases Finder** | 52+ real cases from published medical literature with similarity scoring — same cancer type, stage, and age group |
-| 🧪 **Live Clinical Trials** | Real-time data from ClinicalTrials.gov — active recruiting trials for your specific cancer |
-| 💊 **Treatment Journey Guide** | Week-by-week chemotherapy guide, treatment types explained, side effect management |
-| 🫶 **Emotional Support** | Breathing exercises, talking to children about cancer, crisis resources, support organizations |
+| **AI Cancer Specialist Chat (RAG)** | Ask anything about any cancer — powered by Google Gemini AI with Retrieval Augmented Generation. Relevant real cases from the database are automatically included as context for grounded, accurate answers. |
+| **Diagnosis Analyzer** | Enter cancer type, stage, and age — get best-case, typical, and worst-case outcomes based on real published statistics. Covers 30+ cancer types. |
+| **Similar Cases Finder** | 105+ real cases from published medical literature with similarity scoring — same cancer type, stage, and age group. |
+| **Live Clinical Trials** | Real-time data from ClinicalTrials.gov — active recruiting trials for your specific cancer. |
+| **Treatment Journey Guide** | Week-by-week chemotherapy guide, treatment types explained, side effect management. |
+| **Emotional Support** | Breathing exercises, talking to children about cancer, crisis resources, support organizations. |
 
 ---
 
-## 🦠 Cancer Types Covered
+## Cancer Types Covered
 
 **Blood & Lymphatic**
 - Hodgkin's Lymphoma
 - Non-Hodgkin's Lymphoma (DLBCL, Follicular)
 - Leukemia — ALL, AML, CLL, CML
+- Multiple Myeloma
 
 **Adult Solid Tumors**
 - Breast, Lung, Prostate, Colorectal
 - Melanoma, Ovarian, Cervical, Thyroid
 - Pancreatic, Bladder, Kidney, Stomach
-- Liver, Brain/Glioma, Endometrial
+- Liver (HCC), Brain/Glioma, Endometrial
+- Head & Neck, Esophageal, Testicular, Mesothelioma
 
 **Pediatric Cancers**
 - Hodgkin's Lymphoma, ALL
@@ -44,11 +46,11 @@ HopePulse was born from a personal experience — a family facing a cancer diagn
 - Medulloblastoma, Rhabdomyosarcoma
 - Osteosarcoma, Ewing Sarcoma
 
-**25+ cancer types** with detailed outcome data and **52+ published cases** in the similarity database.
+**30+ cancer types** with detailed outcome data and **105+ published cases** in the similarity database.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Framework & Language
 | Technology | Version | Purpose |
@@ -69,7 +71,7 @@ HopePulse was born from a personal experience — a family facing a cancer diagn
 ### AI & APIs
 | Technology | Purpose |
 |---|---|
-| **Google Gemini 1.5 Flash** | Powers the AI chat — free tier, no credit card needed |
+| **Google Gemini 2.5 Flash** | Powers the AI chat — free tier, fast responses |
 | **`@google/generative-ai`** | Official Google Generative AI SDK |
 | **ClinicalTrials.gov API v2** | Live clinical trial data — free public API |
 
@@ -78,12 +80,27 @@ HopePulse was born from a personal experience — a family facing a cancer diagn
 |---|---|
 | **Next.js App Router** | File-based routing in `/app` directory |
 | **Server-side API routes** | `/app/api/chat` and `/app/api/trials` — keeps API keys secure on server |
-| **Static case database** | `lib/casesData.ts` — 52+ typed cases, no external database needed |
+| **Static case database** | `lib/casesData.ts` — 105+ typed cases, no external database needed |
 | **Similarity algorithm** | Weighted scoring: cancer type (40pts) + stage (30pts) + age group (20pts) + subtype (10pts) |
+| **RAG (Retrieval Augmented Generation)** | Chat API searches the case database on every message to inject relevant real cases as context into Gemini's system prompt |
 
 ---
 
-## 📁 Project Structure
+## How RAG Works
+
+Every time a user sends a message in the AI chat, HopePulse performs a lightweight similarity search:
+
+1. **Keyword extraction**: The user's message is scanned for cancer type names (breast, lung, hodgkin, leukemia, etc.), stage mentions (Stage 1, Stage 3B, etc.), and treatment keywords.
+2. **Case scoring**: Every case in the 105+ case database is scored against the extracted keywords. Cancer type match = 40 points, stage match = 20 points.
+3. **Top 3 retrieval**: The top 3 highest-scoring cases (score > 0) are selected.
+4. **Context injection**: The selected cases (including title, cancer type, stage, age, treatment protocol, outcome, follow-up, and journal reference) are appended to Gemini's system prompt as a "Relevant Cases From Our Database" section.
+5. **Grounded response**: Gemini generates its response with real published case data as context, and may cite specific case IDs in its answer.
+
+This gives the AI access to real published outcomes without requiring a vector database or embeddings — simple, fast, and effective at the scale of 100+ cases.
+
+---
+
+## Project Structure
 
 ```
 hopepulse/
@@ -94,7 +111,7 @@ hopepulse/
 │   ├── chat/
 │   │   └── page.tsx              # AI Chat interface
 │   ├── analysis/
-│   │   └── page.tsx              # Diagnosis Analyzer
+│   │   └── page.tsx              # Diagnosis Analyzer (30+ cancer types)
 │   ├── cases/
 │   │   └── page.tsx              # Similar Cases finder
 │   ├── treatments/
@@ -105,14 +122,14 @@ hopepulse/
 │   │   └── page.tsx              # Emotional Support resources
 │   └── api/
 │       ├── chat/
-│       │   └── route.ts          # Google Gemini AI endpoint
+│       │   └── route.ts          # Google Gemini AI endpoint (with RAG)
 │       └── trials/
 │           └── route.ts          # ClinicalTrials.gov proxy
 ├── components/
 │   ├── Navbar.tsx                # Navigation bar (responsive)
 │   └── Footer.tsx                # Footer
 ├── lib/
-│   └── casesData.ts              # 52+ published cases + similarity scoring function
+│   └── casesData.ts              # 105+ published cases + similarity scoring + CancerType union
 ├── public/                       # Static assets
 ├── tailwind.config.js            # Tailwind config + custom colors
 ├── next.config.js                # Next.js config
@@ -122,7 +139,7 @@ hopepulse/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18.16 or higher
@@ -158,7 +175,7 @@ GOOGLE_API_KEY=your_google_api_key_here
 
 ---
 
-## 🌍 Deployment (Vercel — Free)
+## Deployment (Vercel — Free)
 
 1. Push your code to GitHub
 2. Go to [vercel.com](https://vercel.com) → Import your repository
@@ -169,22 +186,25 @@ Every push to `main` auto-deploys. No configuration needed.
 
 ---
 
-## 📊 Data Sources
+## Data Sources
 
-The Similar Cases database (`lib/casesData.ts`) contains **52+ composite cases** built from published medical literature:
+The Similar Cases database (`lib/casesData.ts`) contains **105+ composite cases** built from published medical literature:
 
-- **COG** (Children's Oncology Group) clinical trials — AHOD0431, ANBL1232, ARST0431
-- **EuroNet-PHL** protocols for pediatric Hodgkin's
-- **NEJM** published trials — KEYNOTE-522, FLOT4-AIO, CheckMate 214, CheckMate 649
-- **Lancet Oncology** — PACIFIC trial, SOLO-1, EF-14
-- **ASCO** published case series
-- **GPOH** (German Pediatric Oncology) protocols
+- **COG** (Children's Oncology Group) clinical trials — AHOD0431, ANBL1232, ARST0431, AREN protocols
+- **EuroNet-PHL / GPOH** protocols for pediatric Hodgkin's
+- **NEJM** published trials — KEYNOTE-522, CROSS, CheckMate 743, DESTINY-Breast03, DETERMINATION
+- **Lancet Oncology** — PACIFIC trial, SOLO-1, EF-14, NPC-0501, JAVELIN Merkel 200
+- **JCO** — ALLIANCE A021501, IGCCCG BEP data, SWENOTECA, EURO-EWING
+- **ASCO / ESMO** published case series and guidelines
+- **MAIA, VIALE-A, IMbrave150, OlympiA, CheckMate 577** — latest pivotal trials
+
+Cases cover: Hodgkin's lymphoma, ALL, AML, CML, CLL, breast, lung, prostate, colorectal, melanoma, ovarian, cervical, thyroid, pancreatic, bladder, kidney, stomach, liver (HCC), brain/GBM, endometrial, multiple myeloma, Wilms tumor, neuroblastoma, osteosarcoma, rhabdomyosarcoma, Ewing sarcoma, head & neck, esophageal, testicular, soft tissue sarcoma, Merkel cell carcinoma, mesothelioma.
 
 > Cases are anonymized composite summaries — representative of real published outcomes, not individual patient records.
 
 ---
 
-## 🎨 Design System
+## Design System
 
 Custom color palette built on Tailwind:
 
@@ -198,13 +218,13 @@ Custom color palette built on Tailwind:
 
 ---
 
-## ⚠️ Medical Disclaimer
+## Medical Disclaimer
 
 HopePulse provides **educational information only** — not medical advice. All statistics are based on published population data and may not reflect individual outcomes. Always consult your oncologist and medical team for diagnosis, treatment decisions, and prognosis specific to your situation.
 
 ---
 
-## 💙 Why HopePulse Exists
+## Why HopePulse Exists
 
 This platform was built for families like ours — people who receive a cancer diagnosis and find themselves drowning in terrifying Google results at 2am. HopePulse exists to give every patient and family **accurate, balanced, human information** so they can face this journey with clarity instead of fear.
 
@@ -212,7 +232,7 @@ For every cancer. Every stage. Every age. Every family.
 
 ---
 
-## 📄 License
+## License
 
 Copyright © 2026 Sirik. All rights reserved.
 

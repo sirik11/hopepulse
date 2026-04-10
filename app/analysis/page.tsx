@@ -39,8 +39,15 @@ const CANCER_TYPES = [
     { value: "osteosarcoma",   label: "Osteosarcoma" },
     { value: "ewing",          label: "Ewing Sarcoma" },
   ]},
-  { group: "Other", types: [
-    { value: "other", label: "Other (describe in notes)" },
+  { group: "Head, Neck & Thoracic", types: [
+    { value: "head_neck",    label: "Head & Neck Cancer" },
+    { value: "esophageal",  label: "Esophageal Cancer" },
+    { value: "mesothelioma",label: "Mesothelioma" },
+  ]},
+  { group: "Urological & Other", types: [
+    { value: "testicular",  label: "Testicular Cancer" },
+    { value: "myeloma",     label: "Multiple Myeloma" },
+    { value: "other",       label: "Other (describe in notes)" },
   ]},
 ];
 
@@ -826,6 +833,288 @@ function getOutcomeData(type: string, stage: string, age: string): OutcomeData |
       hopefulNote: s <= 2 ? "Early-stage kidney cancer is highly curable with minimally invasive surgery. Most patients keep their kidney function and return to normal life." : "Metastatic kidney cancer outcomes have been transformed by combination immunotherapy. Durable complete responses — effectively cured — are seen in 10–15% of patients with ipi/nivo. Many others achieve years of disease control.",
       timeToTreatment: "Surgery for localized disease typically within 2–4 weeks. Systemic therapy for metastatic: starts within 2–4 weeks of staging.",
       waitingTips: ["IMDC risk score calculation guides choice between immunotherapy combinations", "Pathology confirmation of clear cell vs non-clear cell — guides treatment algorithm", "VHL mutation testing for potential belzutifan eligibility", "Ask about active surveillance for small (<3cm) incidental tumors in older patients"],
+    };
+  }
+
+  // ===== LIVER (HCC) =====
+  if (type === "liver") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const survivals = [70, 50, 15, 5];
+    const pct = survivals[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Liver Cancer (HCC)", stage, ageGroup: age,
+      bestCase: { label: s <= 2 ? "Surgical resection or transplant — potential cure" : "Immunotherapy + anti-VEGF response", pct: Math.min(pct + 15, 80), desc: s <= 2 ? "Early HCC (BCLC Stage A): resection or liver transplantation (Milan criteria) is potentially curative. Ablation (RFA/MWA) for small tumors. Transplant: 5-year survival ~70–80%." : "Atezolizumab + bevacizumab (IMbrave150) achieves objective response in ~27% with improved OS vs sorafenib. Complete responses seen in a subset." },
+      typicalCase: { label: s <= 2 ? "Resection / TACE / ablation" : "Atezolizumab + bevacizumab (IMbrave150)", pct, desc: s <= 2 ? "Surgical resection for single tumors with preserved liver function (Child-Pugh A). TACE (transarterial chemoembolization) for intermediate stage. RFA for lesions <3cm." : "First-line: atezolizumab 1200 mg + bevacizumab 15 mg/kg q3w (IMbrave150 — improved OS and PFS vs sorafenib). Sorafenib or lenvatinib as alternatives." },
+      worstCase: { label: "Cirrhosis limiting treatment + progression", pct: 100 - pct, desc: "Underlying cirrhosis significantly limits treatment options. Child-Pugh B/C patients may not tolerate systemic therapy. Sorafenib provides modest benefit. Best supportive care including pain management and ascites control are important for advanced disease." },
+      treatmentOverview: [
+        "**BCLC staging**: A (early) → surgery/ablation; B (intermediate) → TACE; C (advanced) → systemic therapy",
+        "**Surgery**: Hepatic resection for single lesion, preserved liver function — potential cure",
+        "**Liver transplant**: Milan criteria (single ≤5cm or ≤3 lesions, none >3cm) — best long-term outcome",
+        "**TACE**: Intermediate stage — doxorubicin-lipiodol or drug-eluting beads",
+        "**Ablation (RFA/MWA)**: Lesions <3cm — equivalent to resection for BCLC 0–A",
+        "**First-line systemic**: Atezolizumab + bevacizumab (IMbrave150) — superior to sorafenib",
+        "**Second-line**: Ramucirumab (AFP >400), cabozantinib, regorafenib",
+      ],
+      keyFacts: [
+        `5-year survival BCLC Stage ${s}: **~${pct}%** (highly dependent on liver function)`,
+        "Liver cirrhosis is present in ~80% — limits resection and tolerance of systemic therapy",
+        "Alpha-fetoprotein (AFP): tumor marker — guides surveillance and treatment monitoring",
+        "HBV/HCV treatment reduces HCC risk: antiviral therapy essential",
+        "Atezolizumab + bevacizumab (IMbrave150): improved OS vs sorafenib — new standard of care",
+      ],
+      hopefulNote: s <= 2 ? "Early liver cancer detected through surveillance (ultrasound + AFP every 6 months) is resectable and potentially curable. Liver transplantation within Milan criteria offers 70–80% 5-year survival." : "Advanced HCC treatment has improved significantly with immunotherapy combinations. Regular AFP and ultrasound surveillance in at-risk patients (cirrhosis, chronic hepatitis B) is the most important intervention.",
+      timeToTreatment: "Urgent multidisciplinary team review. Resection or TACE typically within 3–4 weeks.",
+      waitingTips: ["Child-Pugh scoring guides treatment eligibility — liver function is as important as tumor stage", "Hepatitis B/C treatment if active viral hepatitis — reduces further liver damage", "Portal vein thrombosis assessment before TACE — contraindication if severe", "AFP and triphasic CT/MRI surveillance every 6 months if cirrhosis diagnosed"],
+    };
+  }
+
+  // ===== WILMS TUMOR =====
+  if (type === "wilms") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const survivals = [99, 98, 94, 86];
+    const pct = survivals[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Wilms Tumor (Nephroblastoma)", stage, ageGroup: age,
+      bestCase: { label: "Surgical cure — excellent long-term survival", pct, desc: "Wilms tumor has one of the best outcomes of any childhood cancer. Stage 1–2 treated with nephrectomy ± short chemotherapy achieves near-100% cure rates. Even Stage 4 (lung metastases) is cured in >85% of children." },
+      typicalCase: { label: "Nephrectomy + EE-4A chemotherapy (COG protocol)", pct: Math.max(pct - 5, 80), desc: "Radical nephrectomy (or pre-operative chemo for bilateral disease) + actinomycin-D + vincristine (EE-4A) for favorable histology. Radiation added for Stage 3–4 and diffuse anaplasia." },
+      worstCase: { label: "Relapsed or diffuse anaplastic histology", pct: s >= 4 ? 20 : 5, desc: "Diffuse anaplastic histology or relapsed Wilms has more challenging outcomes. Salvage with ICE or other regimens. Radiotherapy and transplant used in some protocols. Even relapsed favorable histology Wilms can be successfully re-treated." },
+      treatmentOverview: [
+        "**Surgery**: Radical nephrectomy (COG approach) — primary surgery first for most stages",
+        "**EE-4A (Stage 1–2 FH)**: Actinomycin-D + vincristine × 18 weeks — minimal side effects",
+        "**DD-4A (Stage 3–4 FH)**: Adds doxorubicin + abdominal radiation for Stage 3",
+        "**Whole lung irradiation (WLI)**: For Stage 4 with lung metastases — still achieves high cure rates",
+        "**Bilateral Wilms (Stage 5)**: Pre-operative chemo to preserve kidney function, nephron-sparing surgery",
+        "**Diffuse anaplastic**: Intensified regimen (UH-1: vincristine, actinomycin, doxorubicin, cyclophosphamide, etoposide)",
+        "**WT1/CTNNB1 testing**: Molecular markers guide risk stratification",
+      ],
+      keyFacts: [
+        `4-year OS Wilms Stage ${s} favorable histology: **~${pct}%** (COG AREN protocols)`,
+        "Wilms tumor: most common kidney tumor in children — peak age 3–4 years",
+        "Bilateral Wilms (5–7%): requires nephron-sparing surgery — preserve both kidneys",
+        "Lung metastases (Stage 4): whole lung irradiation achieves cure in >85%",
+        "Late effects monitoring: remaining kidney function, anthracycline cardiac effects",
+      ],
+      hopefulNote: "Wilms tumor has one of the highest cure rates of any childhood cancer — even Stage 4 with lung spread is cured in the majority of children. The COG has refined protocols over decades to maximize cure while minimizing long-term side effects. This is genuinely excellent news for families facing this diagnosis.",
+      timeToTreatment: "Surgery within 1 week in most cases. Preoperative chemotherapy for bilateral or unresectable disease.",
+      waitingTips: ["CT chest for lung metastases before surgery", "Echocardiogram before doxorubicin-containing regimens", "Bilateral renal imaging to rule out bilateral Wilms before nephrectomy", "Enroll in COG AREN trials at a pediatric oncology center"],
+    };
+  }
+
+  // ===== MEDULLOBLASTOMA =====
+  if (type === "medulloblastoma") {
+    const grade = parseInt(stage.replace(/\D/g, "")) || 2;
+    const isHighRisk = stage.includes("4") || stage.includes("3") || stage.includes("Grade 4");
+    return {
+      cancerType: "Medulloblastoma", stage, ageGroup: age,
+      bestCase: { label: "WNT subgroup — near-100% survival", pct: isHighRisk ? 60 : 85, desc: "WNT-activated medulloblastoma has the best prognosis with 5-year OS >95%. DNMB trials are de-escalating therapy in WNT patients to reduce late effects. Standard-risk medulloblastoma (no metastases) has 80–85% 5-year survival." },
+      typicalCase: { label: "Craniospinal radiation + vincristine/cisplatin/CCNU", pct: isHighRisk ? 50 : 78, desc: "Maximal safe resection → craniospinal irradiation (CSI) 23.4–36 Gy → maintenance chemotherapy (vincristine, cisplatin, CCNU or cyclophosphamide). Molecular subgroup determines prognosis and future de-escalation trials." },
+      worstCase: { label: "Group 3 metastatic or TP53-mutant", pct: isHighRisk ? 40 : 20, desc: "Group 3 medulloblastoma with metastases and large cell/anaplastic histology: 5-year OS ~40–50%. TP53-mutant WNT (rare): very poor prognosis. Salvage with high-dose chemo and stem cell transplant used in relapsed settings." },
+      treatmentOverview: [
+        "**Surgery**: Maximal safe resection — extent of resection correlates with outcome",
+        "**Craniospinal irradiation (CSI)**: 23.4 Gy (standard-risk) or 36 Gy (high-risk) + posterior fossa boost",
+        "**Chemotherapy**: Vincristine concurrent + maintenance CCNU/vincristine/cisplatin",
+        "**Molecular subgroups**: WNT, SHH, Group 3, Group 4 — defines prognosis",
+        "**WNT subgroup**: De-escalation trials underway — may need less radiation",
+        "**SHH subgroup**: Vismodegib (hedgehog inhibitor) in trials for recurrent SHH-driven cases",
+        "**Infants (<3 years)**: Intensive chemotherapy to delay/avoid craniospinal radiation",
+      ],
+      keyFacts: [
+        `Medulloblastoma 5-year OS (standard risk): **~80–85%** (improving with molecular-guided therapy)`,
+        "WNT subgroup: best prognosis — >95% OS in some trials",
+        "Group 3 metastatic: most challenging — 5-year OS ~40–60%",
+        "Late effects of craniospinal radiation: cognitive effects, growth hormone deficiency, hearing loss",
+        "Most common malignant brain tumor in children — COG ACNS protocols",
+      ],
+      hopefulNote: "Medulloblastoma is the most common malignant brain tumor in children, and the majority are cured with surgery, radiation, and chemotherapy. The WNT subgroup — about 10% of cases — has near-100% survival. Molecular subgrouping now allows more precise risk-stratification and de-escalation of late-effect-causing treatments.",
+      timeToTreatment: "Urgent surgery for raised intracranial pressure. Post-op MRI and molecular testing guides radiation/chemo planning.",
+      waitingTips: ["Molecular subgrouping (WNT/SHH/Group 3/Group 4) — essential for prognosis and trial eligibility", "Craniospinal MRI post-surgery to assess metastases before radiation planning", "Endocrine assessment before and after craniospinal radiation", "Neuropsychological baseline before treatment — guides educational support"],
+    };
+  }
+
+  // ===== EWING SARCOMA =====
+  if (type === "ewing") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 2;
+    const hasMetastases = s >= 4 || stage.includes("4");
+    return {
+      cancerType: "Ewing Sarcoma", stage, ageGroup: age,
+      bestCase: { label: "Localized disease cure with VAC/IE", pct: hasMetastases ? 30 : 70, desc: hasMetastases ? "Metastatic Ewing with pulmonary-only metastases: ~30% long-term EFS. High-dose chemotherapy + stem cell transplant in some protocols. Complete surgical resection of all disease improves outcomes." : "Localized Ewing sarcoma: 5-year EFS ~70–75% with VAC/IE chemotherapy + surgery ± radiation. Pelvic location has worse outcomes than extremity tumors." },
+      typicalCase: { label: "VAC/IE alternating chemotherapy + local treatment", pct: hasMetastases ? 20 : 60, desc: hasMetastases ? "EURO-EWING 99 high-risk protocol: intensive induction followed by high-dose busulfan/melphalan + stem cell transplant for metastatic disease." : "VAC (vincristine, actinomycin-D, cyclophosphamide) alternating with IE (ifosfamide, etoposide) × 14–17 cycles. Surgery for local control (preferred over radiation when feasible)." },
+      worstCase: { label: "Multiple metastases or bone marrow involvement", pct: hasMetastases ? 75 : 30, desc: "Bone marrow or multi-site metastatic Ewing: 5-year EFS <20%. Relapsed Ewing: median survival 6–12 months. Gemcitabine + docetaxel, irinotecan + temozolomide active in relapse. Clinical trials essential." },
+      treatmentOverview: [
+        "**VAC/IE chemotherapy**: Alternating cycles — 10 weeks of induction before local treatment",
+        "**Surgery**: Wide resection preferred over radiation when feasible — better local control",
+        "**Radiation**: IMRT/SBRT for unresectable or pelvic primaries (54–55.8 Gy)",
+        "**EURO-EWING high-risk**: High-dose busulfan/melphalan + ASCT for metastatic disease",
+        "**Proton therapy**: Preferred over IMRT for pelvic/spinal primaries — reduces late effects",
+        "**Genomic testing**: EWSR1 translocation (FISH) confirms diagnosis in >90%",
+        "**Relapsed**: Irinotecan + temozolomide, gemcitabine/docetaxel, cabozantinib — clinical trials",
+      ],
+      keyFacts: [
+        `Localized Ewing sarcoma 5-year EFS: **~68–72%** with VAC/IE`,
+        "Metastatic at diagnosis (~25%): 5-year EFS ~20–30% for pulmonary mets",
+        "EWSR1-FLI1 translocation: present in >85% — diagnostic hallmark",
+        "Age <10: better prognosis than adolescents/young adults",
+        "Pelvic primary: worse outcomes, higher local relapse — proton therapy preferred",
+      ],
+      hopefulNote: "Localized Ewing sarcoma is curable in ~70% of patients with intensive chemotherapy and surgery. Even the challenging pelvic location can be controlled with modern radiation techniques. For metastatic disease, intensive protocols including stem cell transplant are pursued aggressively — and a meaningful minority of patients achieve long-term cure.",
+      timeToTreatment: "Biopsy before chemotherapy. Start chemotherapy within 1–2 weeks — local treatment after initial chemotherapy response.",
+      waitingTips: ["EWSR1 FISH confirmation required before treatment — rules out other small round cell tumors", "MRI for local staging + CT chest for pulmonary metastases before treatment", "Bone marrow biopsy for staging in high-risk disease", "Enroll in EURO-EWING or COG AEWS trials if available"],
+    };
+  }
+
+  // ===== MULTIPLE MYELOMA =====
+  if (type === "myeloma") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 2;
+    const isFit = age !== "senior";
+    return {
+      cancerType: "Multiple Myeloma", stage, ageGroup: age,
+      bestCase: { label: isFit ? "Deep MRD-negative remission with ASCT + maintenance" : "VGPR/CR on VRd → long-term disease control", pct: s <= 2 ? 60 : 40, desc: isFit ? "Transplant-eligible patients: VRd induction → ASCT → lenalidomide maintenance (DETERMINATION trial). MRD-negative patients have 5-year PFS ~65%. Daratumumab quadruplet (Dara-VRd) improves MRD negativity further." : "Transplant-ineligible: VRd or daratumumab-Rd (MAIA trial). Daratumumab + Rd improved OS vs Rd alone — median OS >65 months. Very good partial response achievable in most patients." },
+      typicalCase: { label: isFit ? "VRd induction → ASCT → lenalidomide maintenance" : "Daratumumab + lenalidomide + dexamethasone (MAIA)", pct: s <= 2 ? 50 : 30, desc: isFit ? "VRd × 4 cycles → high-dose melphalan + autologous stem cell transplant → lenalidomide 10 mg maintenance until progression. Median PFS ~66 months in DETERMINATION trial." : "Daratumumab-Rd until progression (MAIA trial). Bortezomib-based VRd also standard. Monthly zoledronic acid for bone protection." },
+      worstCase: { label: "Early relapse or high-risk cytogenetics", pct: s >= 3 ? 60 : 30, desc: "High-risk myeloma: del(17p), t(4;14), t(14;16), gain(1q). ISS Stage 3 + high-risk FISH: median OS ~3 years. Relapsed disease: daratumumab, carfilzomib, elotuzumab, CAR-T (ide-cel, cilta-cel) — multiple lines of active therapy." },
+      treatmentOverview: [
+        "**Transplant-eligible**: VRd or Dara-VRd induction × 4 → ASCT → lenalidomide maintenance",
+        "**Transplant-ineligible**: Daratumumab + Rd (MAIA) or VRd until progression",
+        "**Bone protection**: Zoledronic acid q4w — prevents skeletal events",
+        "**Autologous SCT**: High-dose melphalan + stem cell rescue — deepens and prolongs remission",
+        "**Lenalidomide maintenance**: After ASCT — extends PFS significantly",
+        "**Relapse (1st)**: Daratumumab-based or carfilzomib-based triplet",
+        "**CAR-T**: Ide-cel (BCMA CAR-T) and cilta-cel — for later-line relapsed/refractory myeloma",
+      ],
+      keyFacts: [
+        `Myeloma is not currently curable but is highly manageable — median OS with modern therapy: **5–10+ years**`,
+        "ISS staging (I–III) + FISH cytogenetics determine risk — del(17p) is highest risk",
+        "MRD negativity: strongest predictor of long-term remission",
+        "Multiple effective lines of therapy at relapse — CAR-T now available for later-line",
+        "Smoldering myeloma: active surveillance — no treatment until CRAB criteria met",
+      ],
+      hopefulNote: "Multiple myeloma is not curable in most patients, but it is one of oncology's most actively developing fields. Treatment has transformed from median survival 3 years to 8–10+ years with modern triplet induction, ASCT, and maintenance. Many patients live with good quality of life for a decade or more. CAR-T therapy and bispecific antibodies are now available at relapse.",
+      timeToTreatment: "FISH cytogenetics and ISS staging guide initial treatment choice. Therapy starts within 2–4 weeks.",
+      waitingTips: ["FISH cytogenetics on bone marrow biopsy — risk stratification is essential", "Baseline imaging: whole-body low-dose CT or PET-CT for lytic lesions", "Dental evaluation before bisphosphonates (osteonecrosis of jaw prevention)", "Discuss transplant eligibility and sperm/egg preservation before starting treatment"],
+    };
+  }
+
+  // ===== TESTICULAR CANCER =====
+  if (type === "testicular") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 1;
+    const survivals = [99, 96, 80, 74];
+    const pct = survivals[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Testicular Cancer", stage, ageGroup: age,
+      bestCase: { label: "Surgical cure — one of the most curable cancers at any stage", pct, desc: s <= 2 ? "Stage 1–2 testicular cancer: orchidectomy alone or with 1–2 cycles adjuvant BEP cures >99% of patients. Active surveillance is safe for Stage 1 seminoma with relapse rate ~15–20%, all retreatable." : "Even Stage 3 non-seminoma GCT treated with BEP chemotherapy achieves cure in ~70–80%. Good-risk disease (IGCCCG): cure rate ~95%." },
+      typicalCase: { label: s <= 2 ? "Orchidectomy + surveillance or adjuvant BEP" : "BEP × 3–4 cycles → RPLND if residual", pct: Math.max(pct - 5, 70), desc: s <= 2 ? "Radical orchidectomy + 5 years surveillance (Stage 1A seminoma) or single-cycle carboplatin adjuvant. Stage 2A seminoma: radiation or carboplatin. Marker normalization after orchidectomy is essential." : "BEP × 3 cycles (good risk) or 4 cycles (intermediate risk) per IGCCCG risk stratification. Post-BEP RPLND for residual mass >1cm in non-seminoma." },
+      worstCase: { label: "Late relapse or poor-risk IGCCCG disease", pct: 100 - pct, desc: "Poor-risk IGCCCG (AFP >10,000, non-pulmonary visceral metastases): 5-year survival ~50%. Salvage: TIP (paclitaxel, ifosfamide, cisplatin) or high-dose VeIP + ASCT. Late relapse (>2 years): surgery first if resectable." },
+      treatmentOverview: [
+        "**Orchidectomy**: Radical orchidectomy via inguinal incision — first step for all stages",
+        "**Stage 1 seminoma**: Active surveillance (preferred) or single carboplatin cycle or radiation",
+        "**Stage 1 non-seminoma**: Surveillance (preferred for pT1) or BEP × 1–2 cycles",
+        "**Stage 2A/B**: Radiation (seminoma) or BEP × 3 cycles (non-seminoma)",
+        "**Stage 3 (good risk)**: BEP × 3 cycles — cure rate ~95% (IGCCCG)",
+        "**RPLND**: Retroperitoneal lymph node dissection for residual mass post-chemo",
+        "**Salvage**: TIP chemotherapy or high-dose VeIP + stem cell transplant",
+      ],
+      keyFacts: [
+        `5-year survival Stage ${s}: **~${pct}%** — testicular cancer is one of the most curable solid tumors`,
+        "Good-risk Stage 3 (IGCCCG): ~95% cure with BEP × 3 cycles",
+        "Tumor markers: AFP, beta-hCG, LDH — essential for staging, monitoring, and follow-up",
+        "Regular self-examination: most tumors found by self-exam, many at Stage 1",
+        "Sperm banking before chemotherapy: essential for young men",
+      ],
+      hopefulNote: "Testicular cancer is one of oncology's great success stories — curable in ~95–99% of cases at Stage 1–2, and even Stage 3 good-risk disease achieves ~95% cure with chemotherapy. This is a cancer where the expected outcome is cure, not just control. Sperm banking before treatment preserves fertility for most patients.",
+      timeToTreatment: "Orchidectomy within 1–2 weeks. Chemotherapy (if needed) starts 2–3 weeks after surgery once markers trend.",
+      waitingTips: ["Sperm banking BEFORE chemotherapy — essential for young men", "Tumor markers (AFP, beta-hCG, LDH) at diagnosis and after orchidectomy — trend guides stage", "CT chest/abdomen/pelvis staging after orchidectomy", "Consider IGCCCG risk calculator before starting BEP — guides number of cycles"],
+    };
+  }
+
+  // ===== HEAD & NECK CANCER =====
+  if (type === "head_neck") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 2;
+    const survivals = [90, 74, 55, 35];
+    const pct = survivals[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Head & Neck Cancer", stage, ageGroup: age,
+      bestCase: { label: "HPV-positive disease — excellent chemoradiation cure rates", pct: Math.min(pct + 10, 95), desc: s <= 2 ? "Early-stage head and neck SCC (T1–T2): surgery or radiotherapy alone achieves 5-year survival >85%. HPV-positive oropharyngeal cancer has far better outcomes than HPV-negative — chemoRT achieves 80–90% cure at Stage 3." : "HPV-positive oropharyngeal SCC: chemoradiation achieves CR in >80% with 5-year OS ~80%. De-escalation trials underway to reduce late effects in this excellent-prognosis group." },
+      typicalCase: { label: s <= 2 ? "Surgery or RT alone" : "Cisplatin-based chemoradiation (70 Gy)", pct, desc: s <= 2 ? "Transoral robotic surgery (TORS) or radiotherapy alone for Stage 1–2 oropharyngeal cancer. Equivalently curative with different toxicity profiles." : "Concurrent cisplatin 100 mg/m² q3w (or weekly 40 mg/m²) + IMRT 70 Gy/35 fractions. PET-CT response assessment at 12 weeks. Neck dissection if residual nodes >3cm." },
+      worstCase: { label: "HPV-negative, heavy smoker — higher recurrence risk", pct: 100 - pct, desc: "HPV-negative HNSCC in heavy smokers has worse prognosis. Laryngeal/hypopharyngeal cancers have lower survival than oropharyngeal. Platinum-refractory recurrent/metastatic HNSCC: pembrolizumab + chemotherapy improves OS (KEYNOTE-048)." },
+      treatmentOverview: [
+        "**HPV testing (p16)**: Essential in oropharyngeal SCC — transforms prognosis and guides trials",
+        "**Early stage (T1–T2)**: Surgery (TORS) or radiation alone — equivalent outcomes",
+        "**Locally advanced (T3–T4, N+)**: Concurrent cisplatin + IMRT (70 Gy) — standard of care",
+        "**Cetuximab + RT**: Alternative to cisplatin for platinum-ineligible patients",
+        "**Larynx preservation**: Chemoradiation for Stage 3 laryngeal cancer avoids laryngectomy",
+        "**Metastatic / recurrent**: Pembrolizumab + platinum/5-FU (KEYNOTE-048); cetuximab + platinum",
+        "**PD-L1 testing**: Guides first-line immunotherapy choice",
+      ],
+      keyFacts: [
+        `5-year survival Stage ${s}: **~${pct}%** (HPV+ oropharyngeal significantly better)`,
+        "HPV-positive oropharyngeal SCC: 5-year OS ~80–85% vs ~40–50% for HPV-negative",
+        "Smoking cessation: dramatically reduces HNSCC risk and improves treatment response",
+        "IMRT: reduces xerostomia and dysphagia vs older radiation techniques",
+        "Pembrolizumab: improved OS for recurrent/metastatic HNSCC (KEYNOTE-048 trial)",
+      ],
+      hopefulNote: s <= 2 ? "Early head and neck cancer is highly curable with surgery or radiation. HPV-positive oropharyngeal cancer at any stage has significantly better outcomes than HPV-negative — and treatment can often be de-escalated." : "Locally advanced head and neck cancer treated with combined chemoradiation achieves cure in a substantial proportion of patients — especially HPV-positive disease. Swallowing and voice preservation are increasingly achievable with modern IMRT techniques.",
+      timeToTreatment: "Panendoscopy and biopsy first. HPV testing. PET-CT staging. Treatment within 3–4 weeks.",
+      waitingTips: ["HPV/p16 testing on biopsy — changes prognosis and de-escalation trial eligibility", "Dental assessment before radiation — tooth extractions post-radiation risk osteoradionecrosis", "Swallowing therapy before and during treatment prevents dysphagia", "PEG tube planning — many patients need nutritional support during chemoradiation"],
+    };
+  }
+
+  // ===== ESOPHAGEAL CANCER =====
+  if (type === "esophageal") {
+    const s = parseInt(stage.replace(/\D/g, "")) || 2;
+    const survivals = [50, 35, 20, 5];
+    const pct = survivals[Math.min(s - 1, 3)];
+    return {
+      cancerType: "Esophageal Cancer", stage, ageGroup: age,
+      bestCase: { label: "Complete pathological response to CROSS + surgery", pct: Math.min(pct + 15, 65), desc: s <= 2 ? "CROSS protocol (carboplatin/paclitaxel + 41.4 Gy) → Ivor Lewis esophagectomy: complete pathological response (~29%); 5-year survival CROSS trial ~47%. Complete pCR patients have significantly better survival." : "Definitive chemoradiation for unresectable Stage 3: complete clinical response achievable in ~40%. Nivolumab maintenance after chemoRT (ATTRACTION-3 data supports immunotherapy role)." },
+      typicalCase: { label: s <= 2 ? "CROSS neoadjuvant chemoRT → esophagectomy" : "Cisplatin/5-FU + 50.4 Gy → surveillance", pct, desc: s <= 2 ? "Weekly carboplatin AUC2 + paclitaxel 50 mg/m² × 5 weeks concurrent with 41.4 Gy radiation → Ivor Lewis or transhiatal esophagectomy. Post-operative nivolumab for non-pCR (CheckMate 577)." : "Definitive chemoradiation (RTOG 85-01 regimen or modern IMRT equivalent) for T4b/unresectable. CheckMate 648: nivolumab + chemotherapy for metastatic SCC." },
+      worstCase: { label: "R1/R2 resection or metastatic progression", pct: 100 - pct, desc: "Non-curative (R1/R2) resection or metastatic esophageal cancer: median OS ~12–15 months with chemotherapy + immunotherapy. FLOT may be used for GEJ (gastroesophageal junction) adenocarcinoma. HER2+ GEJ: trastuzumab added to chemo (ToGA trial)." },
+      treatmentOverview: [
+        "**CROSS protocol**: Weekly carboplatin + paclitaxel × 5 weeks + 41.4 Gy → surgery — standard for resectable",
+        "**Ivor Lewis esophagectomy**: Gold standard for mid/lower esophageal cancer",
+        "**Adjuvant nivolumab (CheckMate 577)**: For residual disease post-CROSS — improves DFS",
+        "**Definitive chemoRT**: For inoperable or patient-choice larynx/esophagus preservation",
+        "**HER2 testing**: ~20% of GEJ adenocarcinomas HER2+ — trastuzumab adds survival (ToGA)",
+        "**First-line metastatic SCC**: Nivolumab + platinum/5-FU (CheckMate 648) — improved OS",
+        "**First-line metastatic adenocarcinoma**: FLOT or FOLFOX ± trastuzumab/nivolumab",
+      ],
+      keyFacts: [
+        `5-year survival Stage ${s}: **~${pct}%** (improving with CROSS + immunotherapy)`,
+        "CROSS trial: neoadjuvant chemoRT improved 5-year OS from 34% to 47% vs surgery alone",
+        "CheckMate 577: adjuvant nivolumab for residual disease doubles disease-free survival",
+        "HER2+ GEJ adenocarcinoma (~20%): trastuzumab significantly improves survival",
+        "Complete pathological response (pCR) to CROSS: strongly predicts long-term survival",
+      ],
+      hopefulNote: s <= 2 ? "Resectable esophageal cancer treated with the CROSS protocol — neoadjuvant chemoradiation before surgery — has significantly improved outcomes. Complete pathological response is seen in ~29% and these patients have excellent long-term survival." : "While advanced esophageal cancer is challenging, immunotherapy has transformed the metastatic treatment landscape. Nivolumab-based regimens improve survival, and maintaining swallowing function is a key quality-of-life goal throughout treatment.",
+      timeToTreatment: "EUS for T-staging. HER2 testing. Nutritional optimization (often a stent or NJ tube). CROSS starts 2–3 weeks after work-up.",
+      waitingTips: ["Endoscopic ultrasound (EUS) for accurate T-staging before CROSS", "Nutritional support — most patients are malnourished; NJ feeding tube or stent may be needed", "HER2 testing on biopsy — guides systemic therapy choice", "PFTs and cardiac assessment before major esophageal surgery"],
+    };
+  }
+
+  // ===== MESOTHELIOMA =====
+  if (type === "mesothelioma") {
+    return {
+      cancerType: "Mesothelioma (Pleural)", stage, ageGroup: age,
+      bestCase: { label: "Early resectable disease + trimodal therapy", pct: 40, desc: "Early-stage epithelioid mesothelioma treated with pleurectomy/decortication + chemotherapy + radiation (trimodal) achieves median OS 25–30 months. Immunotherapy (nivolumab + ipilimumab) has improved first-line outcomes vs chemotherapy." },
+      typicalCase: { label: "Nivolumab + ipilimumab (CheckMate 743 — first line)", pct: 25, desc: "CheckMate 743: nivolumab 360 mg q3w + ipilimumab 1 mg/kg q6w improved median OS vs pemetrexed/platinum (18.1 vs 14.1 months) — now standard first-line. Epithelioid histology benefits most. Pemetrexed + cisplatin/carboplatin if immunotherapy not suitable." },
+      worstCase: { label: "Sarcomatoid histology or rapid progression", pct: 70, desc: "Sarcomatoid mesothelioma is rare but aggressive — median OS <1 year with any treatment. Advanced disease with peritoneal spread: supportive care + symptom control. Indwelling pleural catheter relieves breathlessness effectively." },
+      treatmentOverview: [
+        "**Pleurectomy/decortication (P/D)**: Lung-sparing surgery for early resectable disease",
+        "**Extrapleural pneumonectomy (EPP)**: Radical resection — high morbidity, falling out of favor",
+        "**First-line systemic**: Nivolumab + ipilimumab (CheckMate 743) — improved OS vs chemo",
+        "**Chemotherapy**: Pemetrexed + cisplatin/carboplatin — previous standard, still used",
+        "**Hemithoracic radiation**: Post-P/D for local control in selected patients",
+        "**Indwelling pleural catheter (IPC)**: Drainage of symptomatic effusion — improves QoL",
+        "**Genetic testing (BAP1, NF2)**: Germline BAP1 mutation found in ~15% — family counseling",
+      ],
+      keyFacts: [
+        "Mesothelioma median OS with modern immunotherapy (CheckMate 743): **~18 months**",
+        "Epithelioid histology: better prognosis than sarcomatoid or biphasic",
+        "Asbestos exposure: cause in >80% — latency 20–50 years",
+        "BAP1 germline mutation: ~15% of cases — hereditary risk, family genetic counseling",
+        "Indwelling pleural catheter: effective palliative approach for effusion control",
+      ],
+      hopefulNote: "Mesothelioma is a difficult cancer, but the CheckMate 743 trial has provided the first significant survival improvement in two decades. Nivolumab + ipilimumab immunotherapy has replaced chemotherapy as the preferred first-line approach. Symptom control — particularly breathlessness from pleural effusion — is very achievable with indwelling catheters.",
+      timeToTreatment: "VATS pleural biopsy for tissue diagnosis. Immunotherapy can start within 2–3 weeks of diagnosis.",
+      waitingTips: ["Histological subtype (epithelioid vs sarcomatoid) critical — determines treatment and prognosis", "BAP1 germline testing — family may benefit from surveillance", "Indwelling pleural catheter early if effusion causing breathlessness", "Occupational history and asbestos documentation for compensation/benefit eligibility"],
     };
   }
 

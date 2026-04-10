@@ -37,6 +37,14 @@ const CANCER_TYPES = [
   { value: "rhabdomyosarcoma","label": "Rhabdomyosarcoma" },
   { value: "osteosarcoma",    label: "Osteosarcoma (Bone)" },
   { value: "ewing",       label: "Ewing Sarcoma" },
+  // Additional types
+  { value: "head_neck",   label: "Head & Neck Cancer" },
+  { value: "esophageal",  label: "Esophageal Cancer" },
+  { value: "testicular",  label: "Testicular Cancer" },
+  { value: "myeloma",     label: "Multiple Myeloma" },
+  { value: "mesothelioma",label: "Mesothelioma" },
+  { value: "soft_tissue_sarcoma", label: "Soft Tissue Sarcoma" },
+  { value: "merkel_cell", label: "Merkel Cell Carcinoma" },
   { value: "other",       label: "Other cancer type" },
 ];
 
@@ -490,7 +498,7 @@ export default function CasesPage() {
         <div className="grid grid-cols-3 gap-4 mt-4">
           {[
             { value: `${cases.length}+`, label: "Cases in database", icon: Users },
-            { value: "25+", label: "Cancer types covered", icon: Activity },
+            { value: "30+", label: "Cancer types covered", icon: Activity },
             { value: "15+", label: "Countries represented", icon: MapPin },
           ].map(({ value, label, icon: Icon }) => (
             <div key={label} className="card text-center">
