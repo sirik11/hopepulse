@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { HeartPulse, Menu, X, MessageCircleHeart, Search, BookOpen, Microscope, HandHeart, Users } from "lucide-react";
 import clsx from "clsx";
+import AuthButton from "@/components/AuthButton";
 
 const links = [
   { href: "/chat",       label: "AI Chat",         icon: MessageCircleHeart },
@@ -52,8 +53,9 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA */}
-          <div className="hidden md:block">
+          {/* CTA + Auth */}
+          <div className="hidden md:flex items-center gap-2">
+            <AuthButton />
             <Link href="/chat" className="btn-primary text-sm py-2 px-4">
               Talk to HopePulse AI
             </Link>
@@ -92,6 +94,9 @@ export default function Navbar() {
             <Link href="/chat" onClick={() => setOpen(false)} className="btn-primary w-full text-center text-sm mt-2 block">
               Talk to HopePulse AI
             </Link>
+            <div className="pt-2 border-t border-hope-100 mt-2">
+              <AuthButton />
+            </div>
           </div>
         </div>
       )}
