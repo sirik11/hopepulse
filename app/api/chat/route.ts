@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     }
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-flash-latest",
       systemInstruction: SYSTEM_PROMPT,
     });
 
@@ -89,10 +89,11 @@ export async function POST(req: NextRequest) {
     const text = result.response.text();
 
     return NextResponse.json({ message: text });
-  } catch (error) {
-    console.error("Chat API error:", error);
+  } catch (error: any) {
+    console.error("Chat API error:", error?.message || error);
+    const message = error?.message || "Something went wrong. Please try again.";
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { error: message },
       { status: 500 }
     );
   }
