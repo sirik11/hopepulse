@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #f0fdf9;
+  --background: #f8fafc;
   --foreground: #0f172a;
 }
 
@@ -11,22 +11,27 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-hope-600 hover:bg-hope-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95;
+    @apply bg-hope-600 hover:bg-hope-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 inline-flex items-center justify-center;
   }
   .btn-secondary {
-    @apply bg-white hover:bg-hope-50 text-hope-700 font-semibold px-6 py-3 rounded-xl border-2 border-hope-300 transition-all duration-200 active:scale-95;
+    @apply bg-white hover:bg-hope-50 text-hope-700 font-semibold px-6 py-3 rounded-xl border-2 border-hope-200 hover:border-hope-300 transition-all duration-200 active:scale-95 inline-flex items-center justify-center;
   }
   .card {
-    @apply bg-white rounded-2xl shadow-sm border border-hope-100 p-6;
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6;
   }
   .section-title {
     @apply text-3xl font-bold text-slate-800;
@@ -34,30 +39,78 @@ body {
   .badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
   }
+  .input-field {
+    @apply w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-hope-400 focus:border-transparent transition-all bg-white;
+  }
 }
 
-/* Pulse animation for the logo */
+/* Heartbeat animation for the logo */
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
-  14% { transform: scale(1.1); }
+  14% { transform: scale(1.12); }
   28% { transform: scale(1); }
   42% { transform: scale(1.08); }
   70% { transform: scale(1); }
 }
 .heartbeat {
-  animation: heartbeat 2s ease-in-out infinite;
+  animation: heartbeat 2.2s ease-in-out infinite;
 }
 
-/* Chat bubble styles */
-.chat-bubble-user {
-  @apply bg-hope-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-xs md:max-w-md ml-auto;
+/* Page animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-.chat-bubble-ai {
-  @apply bg-white border border-hope-100 text-slate-700 rounded-2xl rounded-tl-sm px-4 py-3 max-w-xs md:max-w-2xl shadow-sm;
+@keyframes slideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-fade-in { animation: fadeIn 0.4s ease-out; }
+.animate-slide-up { animation: slideUp 0.35s ease-out; }
+.animate-slide-down { animation: slideDown 0.3s ease-out; }
+
+/* Prose overrides for chat markdown */
+.prose p { margin-top: 0.5em; margin-bottom: 0.5em; }
+.prose p:first-child { margin-top: 0; }
+.prose p:last-child { margin-bottom: 0; }
+.prose ul { margin-top: 0.5em; margin-bottom: 0.5em; padding-left: 1.25em; }
+.prose li { margin-top: 0.25em; margin-bottom: 0.25em; }
+.prose h1, .prose h2, .prose h3 { margin-top: 1em; margin-bottom: 0.4em; }
+.prose h1:first-child, .prose h2:first-child, .prose h3:first-child { margin-top: 0; }
+.prose strong { color: #1e293b; }
+.prose code {
+  background: #f1f5f9;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+  color: #0f766e;
+}
+.prose blockquote {
+  border-left: 3px solid #14b8a6;
+  padding-left: 1em;
+  color: #475569;
+  font-style: italic;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f0fdf9; }
-::-webkit-scrollbar-thumb { background: #5eead4; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #0d9488; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid #14b8a6;
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background-color: #ccfbef;
+  color: #0f766e;
+}
