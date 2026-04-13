@@ -1,16 +1,13 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder";
 
-// Client for browser usage
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Store on globalThis so Next.js hot reload doesn't create new instances
+const g = globalThis as typeof globalThis & { _supabase?: SupabaseClient };
 
-// Server client with full access (only used in API routes)
-export const supabaseAdmin = createClient(
-  supabaseUrl,
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? "placeholder"
-);
+export const supabase: SupabaseClient =
+  g._supabase ?? (g._supabase = createClient(supabaseUrl, supabaseAnonKey));
 
 export type Database = {
   public: {
