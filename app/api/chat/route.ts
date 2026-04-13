@@ -184,11 +184,18 @@ export async function POST(req: NextRequest) {
     });
 
     // Convert messages to Gemini format
-    // Gemini needs history (all but last message) + current message separately
-    const history = messages.slice(0, -1).map((msg: { role: string; content: string }) => ({
-      role: msg.role === "user" ? "user" : "model",
-      parts: [{ text: msg.content }],
-    }));
+    // Gemini needs history (all but last) starting with a 'user' message
+    const history = messages
+      .slice(0, -1)
+      .map((msg: { role: string; content: string }) => ({
+        role: msg.role === "user" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      }))
+      .filter((_: unknown, i: number, arr: { role: string }[]) => {
+        // Drop leading model messages — Gemini requires history to start with 'user'
+        const firstUserIdx = arr.findIndex((m) => m.role === "user");
+        return firstUserIdx === -1 || i >= firstUserIdx;
+      });
 
     const chat = model.startChat({
       history,
@@ -203,11 +210,16 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: text });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Something went wrong. Please try again.";
-    console.error("Chat API error:", message);
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    const raw = error instanceof Error ? error.message : "Something went wrong.";
+    console.error("Chat API error:", raw);
+
+    let userMessage = "Something went wrong. Please try again in a moment.";
+    if (raw.includes("503") || raw.includes("high demand") || raw.includes("overloaded")) {
+      userMessage = "HopePulse AI is experiencing high demand right now. Please try again in a few seconds.";
+    } else if (raw.includes("API_KEY") || raw.includes("invalid")) {
+      userMessage = "AI configuration issue. Please contact support.";
+    }
+
+    return NextResponse.json({ error: userMessage }, { status: 500 });
   }
 }
