@@ -70,7 +70,7 @@ const features = [
 const stats = [
   { value: "35+", label: "Cancer types", sub: "with detailed outcome data" },
   { value: "160+", label: "Real cases", sub: "from published literature" },
-  { value: "1,000+", label: "Outcomes tracked", sub: "across all case data points" },
+  { value: "10,000+", label: "Patients in studies", sub: "referenced across our database" },
 ];
 
 const cancerTypes = [
