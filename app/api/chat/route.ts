@@ -197,25 +197,38 @@ export async function POST(req: NextRequest) {
         return firstUserIdx === -1 || i >= firstUserIdx;
       });
 
-    const chat = model.startChat({
-      history,
-      generationConfig: {
-        maxOutputTokens: 1500,
-        temperature: 0.7,
-      },
-    });
+    // Retry helper — Gemini often throws 503 on brief demand spikes
+    const sendWithRetry = async (retries = 3, delayMs = 1200): Promise<string> => {
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+          const chat = model.startChat({
+            history,
+            generationConfig: { maxOutputTokens: 1500, temperature: 0.7 },
+          });
+          const result = await chat.sendMessage(lastMessage.content);
+          return result.response.text();
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : "";
+          const isRetryable = msg.includes("503") || msg.includes("high demand") || msg.includes("overloaded") || msg.includes("429");
+          if (isRetryable && attempt < retries) {
+            await new Promise((r) => setTimeout(r, delayMs * attempt));
+            continue;
+          }
+          throw err;
+        }
+      }
+      throw new Error("Max retries exceeded");
+    };
 
-    const result = await chat.sendMessage(lastMessage.content);
-    const text = result.response.text();
-
+    const text = await sendWithRetry();
     return NextResponse.json({ message: text });
   } catch (error: unknown) {
     const raw = error instanceof Error ? error.message : "Something went wrong.";
     console.error("Chat API error:", raw);
 
     let userMessage = "Something went wrong. Please try again in a moment.";
-    if (raw.includes("503") || raw.includes("high demand") || raw.includes("overloaded")) {
-      userMessage = "HopePulse AI is experiencing high demand right now. Please try again in a few seconds.";
+    if (raw.includes("503") || raw.includes("high demand") || raw.includes("overloaded") || raw.includes("Max retries")) {
+      userMessage = "HopePulse AI is very busy right now. Please try again in a few seconds.";
     } else if (raw.includes("API_KEY") || raw.includes("invalid")) {
       userMessage = "AI configuration issue. Please contact support.";
     }

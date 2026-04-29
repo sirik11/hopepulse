@@ -497,9 +497,9 @@ export default function CasesPage() {
       {!searched && (
         <div className="grid grid-cols-3 gap-4 mt-4">
           {[
-            { value: `${cases.length}+`, label: "Cases in database", icon: Users },
-            { value: "30+", label: "Cancer types covered", icon: Activity },
-            { value: "15+", label: "Countries represented", icon: MapPin },
+            { value: `${cases.length}+`, label: "Published cases in database", icon: Users },
+            { value: "35+", label: "Cancer types covered", icon: Activity },
+            { value: "20+", label: "Countries represented", icon: MapPin },
           ].map(({ value, label, icon: Icon }) => (
             <div key={label} className="card text-center">
               <Icon className="w-6 h-6 text-hope-400 mx-auto mb-2" />

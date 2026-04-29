@@ -68,9 +68,9 @@ const features = [
 ];
 
 const stats = [
-  { value: "30+", label: "Cancer types", sub: "with detailed outcome data" },
-  { value: "105+", label: "Real cases", sub: "from published literature" },
-  { value: "24/7", label: "AI specialist", sub: "any question, any time" },
+  { value: "35+", label: "Cancer types", sub: "with detailed outcome data" },
+  { value: "160+", label: "Real cases", sub: "from published literature" },
+  { value: "1,000+", label: "Outcomes tracked", sub: "across all case data points" },
 ];
 
 const cancerTypes = [
