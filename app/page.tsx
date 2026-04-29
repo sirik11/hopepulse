@@ -39,7 +39,7 @@ const features = [
     title: "Similar Cases",
     desc: "See real cases from published medical literature matching your diagnosis — same cancer type, stage, and age — with full treatment stories.",
     href: "/cases",
-    badge: "105+ real cases",
+    badge: "230+ real cases",
   },
   {
     icon: Microscope,
@@ -68,8 +68,8 @@ const features = [
 ];
 
 const stats = [
-  { value: "35+", label: "Cancer types", sub: "with detailed outcome data" },
-  { value: "160+", label: "Real cases", sub: "from published literature" },
+  { value: "45+", label: "Cancer types", sub: "with detailed outcome data" },
+  { value: "230+", label: "Real cases", sub: "from published literature" },
   { value: "10,000+", label: "Patients in studies", sub: "referenced across our database" },
 ];
 
@@ -79,6 +79,9 @@ const cancerTypes = [
   "Ovarian Cancer", "Cervical Cancer", "Thyroid Cancer", "Pancreatic Cancer",
   "Bladder Cancer", "Kidney Cancer", "Liver Cancer", "Childhood Cancers",
   "Myeloma", "Testicular Cancer", "Head & Neck", "Mesothelioma",
+  "Neuroendocrine Tumors", "Cholangiocarcinoma", "Anal Cancer", "Thymoma",
+  "Retinoblastoma", "Uveal Melanoma", "Gallbladder Cancer", "Adrenocortical",
+  "Penile Cancer", "Vulvar Cancer", "+ more",
 ];
 
 const journeySteps = [
